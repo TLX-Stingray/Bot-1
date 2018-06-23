@@ -31,13 +31,18 @@ public class App extends ListenerAdapter {
         String fileName = "bad_word_list_UTF8.txt";
 
         URL resource = App.class.getClassLoader().getResource(fileName);
-        if (resource == null) {
+        if (resource == null)
+        {
             throw new FileNotFoundException(fileName);
         }
+        else
+        {
+            //Read File Content
+            List<String> strings = Files.readAllLines(new File(resource.getFile()).toPath());
+            badwords = new HashSet<>(strings);
+        }
 
-        //Read File Content
-        List<String> strings = Files.readAllLines(new File(resource.getFile()).toPath());
-        badwords = new HashSet<>(strings);
+
     }
 
 
