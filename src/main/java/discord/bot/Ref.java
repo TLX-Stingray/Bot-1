@@ -5,7 +5,7 @@ import java.awt.*;
 public class Ref
 {
         //Config Variables
-        public static final String token = "NDYwMDIzMzAzNDgzMDMxNTU0.Dg-toA.Zk0pulXy4j-YZcVToU5Hv9HOm5U";
+        public static final String token = "NDMyODUzMTQzNDIwNjY1ODY2.Dg-0lg.hzkTgdqEHHbZHzuLHkmgv7yRITs";
         public static final String prefix = "?"; //cannot be @,< or >
         public static final Color userCL = Color.ORANGE;
         public static final Color botCL = Color.BLUE;
