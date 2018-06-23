@@ -28,7 +28,7 @@ public class App extends ListenerAdapter {
         jda.addEventListener(new App());
         jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
-        String fileName = "bad_word_list_UTF8.txt";
+        String fileName = "txt_Files/bad_word_list_UTF8.txt";
 
         URL resource = App.class.getClassLoader().getResource(fileName);
         if (resource == null)
