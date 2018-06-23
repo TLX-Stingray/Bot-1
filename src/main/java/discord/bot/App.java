@@ -32,13 +32,19 @@ public class App extends ListenerAdapter {
         String lowerMsg = objMsg.getContentRaw().toLowerCase();
         String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
         Guild guild = evt.getGuild();
-        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
-            System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
-        }
 
-        //Bot-Prevention
+
+        //Message Validation
         if (evt.getAuthor().isBot()) return;
+        if (objMsgCh instanceof PrivateChannel) return;
 
+        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+            if (guild != null) {
+                System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
+            } else {
+                System.out.print("Received: " + objMsg.getContentRaw() + " on Guild showing NULL \n");
+            }
+        }
         //Commands
         //HELP
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
@@ -58,15 +64,14 @@ public class App extends ListenerAdapter {
             objMsg.delete().queue();
         }
 //USERINFO
-    //Check for Mention
-        if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " userinfo"))
-        {
+        //Check for Mention
+        if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " userinfo")) {
             objUser.openPrivateChannel().queue((channel) ->
             {
                 channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "userinfo {user as mention} `").queue();
             });
         }
-    //execute command
+        //execute command
         if (objMsg.getContentRaw().contains(prefix + "userinfo")) {
             String UserID = objUser.getId();
             Member newMemb = guild.getMemberById(UserID);
@@ -124,8 +129,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(seb.build()).queue();
         }
 //CHANNELINFO
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo"))
-        {   //Init Embed
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo")) {   //Init Embed
             EmbedBuilder ceb = new EmbedBuilder();
             ceb.setTitle("Channel info of " + objMsgCh.getName());
             ceb.setColor(Color.RED);
@@ -137,8 +141,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(ceb.build()).queue();
         }
 //SERVERINFO
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo"))
-        {
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo")) {
             //Init Embed
             EmbedBuilder seb = new EmbedBuilder();
             seb.setTitle("Info About the server named: " + guild.getName());
@@ -147,22 +150,20 @@ public class App extends ListenerAdapter {
             //Add Fields
             seb.addField("Server ID:", guild.getId(), false);
             seb.addField("Member Amount:", Integer.toString(guild.getMembers().size()), false);
-            seb.addField("Created On:" , guild.getCreationTime().toLocalDate().toString(), false);
-            seb.addField("Owner:", guild.getOwner().getUser().getName() + "#" +guild.getOwner().getUser().getDiscriminator() +
-                                " (" + guild.getOwner().getUser().getId() + ")",false);
+            seb.addField("Created On:", guild.getCreationTime().toLocalDate().toString(), false);
+            seb.addField("Owner:", guild.getOwner().getUser().getName() + "#" + guild.getOwner().getUser().getDiscriminator() +
+                    " (" + guild.getOwner().getUser().getId() + ")", false);
             seb.addField("Text Channel Amount:", Integer.toString(guild.getTextChannels().size()), false);
             //Get Text Channels
             String txtChannelList = "";
-            for (TextChannel txt : guild.getTextChannels())
-            {
+            for (TextChannel txt : guild.getTextChannels()) {
                 txtChannelList += txt.getName() + " (" + txt.getId() + ") \n";
             }
             seb.addField("Text Channels:", txtChannelList, false);
             seb.addField("Voice Channel Amount:", Integer.toString(guild.getVoiceChannels().size()), false);
             //Get Voice Channels
             String vcChannelList = "";
-            for (VoiceChannel vc : guild.getVoiceChannels())
-            {
+            for (VoiceChannel vc : guild.getVoiceChannels()) {
                 vcChannelList += vc.getName() + " (" + vc.getId() + ") \n";
             }
             seb.addField("Voice Channels:", vcChannelList, false);
@@ -170,10 +171,9 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(seb.build()).queue();
         }
 //EMPTYCHANNEL
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "emptychannel") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " emptychannel"))
-        {
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "emptychannel") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " emptychannel")) {
             //Get History Size
-            int i = objMsgCh.getIterableHistory().complete().size();;
+            int i = objMsgCh.getIterableHistory().complete().size();
             //Delete messages based on history size
             for (Message message : objMsgCh.getIterableHistory().cache(false)) {
                 message.delete().queue();
@@ -181,21 +181,20 @@ public class App extends ListenerAdapter {
             }
         }
 //CLEAR
-    //Check for Mention
-        if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " clear"))
-        {
+        //Check for Mention
+        if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " clear")) {
             objUser.openPrivateChannel().queue((channel) ->
             {
                 channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "clear (amount) `").queue();
             });
         }
-    //Execute command
+        //Execute command
         if (objMsg.getContentRaw().toLowerCase().contains(prefix + "clear")) {
             String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
-        //Test if amount is Integer
+            //Test if amount is Integer
             if ((Ref.isInteger(samount))) {
                 int i = Integer.parseInt(samount) + 1;
-            //Delete Message History
+                //Delete Message History
                 for (Message message : objMsgCh.getIterableHistory().cache(false)) {
                     message.delete().queue();
                     if (--i <= 0) return;
