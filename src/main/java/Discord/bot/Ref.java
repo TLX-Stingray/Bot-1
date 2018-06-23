@@ -13,7 +13,7 @@ public class Ref
         public static final String cmds = "``` Bot Commands and parameter with description '{}' is optional parameters and " +
                 "'()' is required (leave out the brackets in both cases). " +
                 "Remember to add the prefix if you forgot" +
-                "(You can Also Mention the bot for commands \n" +
+                "(You can Also Mention the bot for commands) \n" +
                 "Help - Duh, the one you are watching. \n" +
                 "Userinfo @{User} - Returns info of user using command or if another user is mentioned it will give info about user \n" +
                 "Botinfo - Shows info of bot. \n" +
