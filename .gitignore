@@ -2,3 +2,5 @@
 target
 *.iml
 out
+bad_word_list_ANSI.txt
+.gitignore

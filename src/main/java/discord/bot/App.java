@@ -9,17 +9,35 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class App extends ListenerAdapter {
     public static JDA jda;
     public static String prefix = Ref.getPrefix();
     public static String token = Ref.getToken();
+    public static Set<String> badwords;
 
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
         jda.addEventListener(new App());
         jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
+        String fileName = "bad_word_list_UTF8.txt";
+
+        URL resource = App.class.getClassLoader().getResource(fileName);
+        if (resource == null) {
+            throw new FileNotFoundException(fileName);
+        }
+
+        //Read File Content
+        List<String> strings = Files.readAllLines(new File(resource.getFile()).toPath());
+        badwords = new HashSet<>(strings);
     }
 
 
@@ -32,7 +50,8 @@ public class App extends ListenerAdapter {
         String lowerMsg = objMsg.getContentRaw().toLowerCase();
         String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
         Guild guild = evt.getGuild();
-
+        String str = objMsg.getContentRaw();
+        String[] splitStr = str.trim().split("\\s+");
 
         //Message Validation
         if (evt.getAuthor().isBot()) return;
@@ -43,6 +62,20 @@ public class App extends ListenerAdapter {
                 System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
             } else {
                 System.out.print("Received: " + objMsg.getContentRaw() + " on Guild showing NULL \n");
+            }
+        }
+        //Profanity check
+        for (String s : splitStr)
+        {
+            if (badwords.contains(s.toLowerCase()))
+            {
+                System.out.print("Profanity Detected in message by: " + objUser.getName() + " (" + objUser.getId() + ") on server: "
+                                        + guild.getName() + " (" + guild.getId() + ") \n");
+                objUser.openPrivateChannel().queue((channel) ->
+                {
+                    channel.sendMessage("I know you might be mad, but please stop using profanity in your messages :(").queue();
+                    objMsg.delete().queue();
+                });
             }
         }
         //Commands
