@@ -14,7 +14,7 @@ public class App extends ListenerAdapter {
     public static JDA jda;
 
     public static void main(String[] args) throws Exception {
-        jda = new JDABuilder(AccountType.BOT).setToken(Ref.token).buildBlocking();
+        jda = new JDABuilder(AccountType.BOT).setToken(Ref.getToken()).buildBlocking();
         jda.addEventListener(new App());
         jda.getPresence().setGame(Game.playing("Prefix: " + Ref.prefix + " | use " + Ref.prefix + "help servers: " + jda.getGuilds().size()));
         System.out.print("done Init \n");

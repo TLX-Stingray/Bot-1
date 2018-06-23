@@ -5,7 +5,6 @@ import java.awt.*;
 public class Ref
 {
         //Config Variables
-        public static final String token = "LOL no, you don't get no token";
         public static final String prefix = "?"; //cannot be @,< or >
         public static final Color userCL = Color.ORANGE;
         public static final Color botCL = Color.BLUE;
@@ -34,4 +33,7 @@ public class Ref
                 return true;
         }
 
+        public static String getToken() {
+                return System.getenv("DISCORD_TOKEN");
+        }
 }
