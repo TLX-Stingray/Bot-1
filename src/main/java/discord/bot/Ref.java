@@ -5,7 +5,6 @@ import java.awt.*;
 public class Ref
 {
         //Config Variables
-        public static final String prefix = "?"; //cannot be @,< or >
         public static final Color userCL = Color.ORANGE;
         public static final Color botCL = Color.BLUE;
 
@@ -35,5 +34,9 @@ public class Ref
 
         public static String getToken() {
                 return System.getenv("DISCORD_TOKEN");
+        }
+
+        public static String getPrefix() {
+                return System.getenv("DISCORD_PREFIX");
         }
 }

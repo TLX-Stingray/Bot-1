@@ -12,11 +12,12 @@ import java.awt.*;
 
 public class App extends ListenerAdapter {
     public static JDA jda;
+    public static String prefix = Ref.getPrefix();
 
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(Ref.getToken()).buildBlocking();
         jda.addEventListener(new App());
-        jda.getPresence().setGame(Game.playing("Prefix: " + Ref.prefix + " | use " + Ref.prefix + "help servers: " + jda.getGuilds().size()));
+        jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
         System.out.print("done Init \n");
     }
 
@@ -30,7 +31,7 @@ public class App extends ListenerAdapter {
         String lowerMsg = objMsg.getContentRaw().toLowerCase();
         String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
         Guild guild = evt.getGuild();
-        if (objMsg.getContentRaw().contains(Ref.prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
             System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
         }
 
@@ -39,7 +40,7 @@ public class App extends ListenerAdapter {
 
         //Commands
         //HELP
-        if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
             //Print in Console
             System.out.print("Sending Help to: " + userFull);
             //send help to user via PM
@@ -61,22 +62,22 @@ public class App extends ListenerAdapter {
         {
             objUser.openPrivateChannel().queue((channel) ->
             {
-                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + Ref.prefix + "userinfo {user as mention} `").queue();
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "userinfo {user as mention} `").queue();
             });
         }
     //execute command
-        if (objMsg.getContentRaw().contains(Ref.prefix + "userinfo")) {
+        if (objMsg.getContentRaw().contains(prefix + "userinfo")) {
             String UserID = objUser.getId();
             Member newMemb = guild.getMemberById(UserID);
             User newUser = objUser;
-            String msgNoCmd = lowerMsg.replace(Ref.prefix + "userinfo", "");
+            String msgNoCmd = lowerMsg.replace(prefix + "userinfo", "");
             //Interpret Command for Different user specified
             if (!msgNoCmd.equalsIgnoreCase("")) {
                 if (!msgNoCmd.contains("<@")) {
                     objUser.openPrivateChannel().queue((channel) ->
                     {
                         channel.sendMessage("You used my 'userinfo' command wrongly, make sure to mention the user you wish to check the info of in the message " +
-                                "for example: " + Ref.prefix + "userinfo @User . Hope you understand :grinning:").queue();
+                                "for example: " + prefix + "userinfo @User . Hope you understand :grinning:").queue();
                     });
 
                     return;
@@ -106,7 +107,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(eb.build()).queue();
         }
 //BOTINFO
-        if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "botinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " botinfo")) {
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "botinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " botinfo")) {
             //Init Embed
             EmbedBuilder seb = new EmbedBuilder();
             seb.setTitle("Server info of: " + jda.getSelfUser().getName() + " running on " + jda.getGuilds().size() + " servers");
@@ -122,7 +123,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(seb.build()).queue();
         }
 //CHANNELINFO
-        if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo"))
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo"))
         {   //Init Embed
             EmbedBuilder ceb = new EmbedBuilder();
             ceb.setTitle("Channel info of " + objMsgCh.getName());
@@ -135,7 +136,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(ceb.build()).queue();
         }
 //SERVERINFO
-        if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo"))
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo"))
         {
             //Init Embed
             EmbedBuilder seb = new EmbedBuilder();
@@ -168,7 +169,7 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(seb.build()).queue();
         }
 //EMPTYCHANNEL
-        if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "emptychannel") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " emptychannel"))
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "emptychannel") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " emptychannel"))
         {
             //Get History Size
             int i = objMsgCh.getIterableHistory().complete().size();;
@@ -184,12 +185,12 @@ public class App extends ListenerAdapter {
         {
             objUser.openPrivateChannel().queue((channel) ->
             {
-                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + Ref.prefix + "clear (amount) `").queue();
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "clear (amount) `").queue();
             });
         }
     //Execute command
-        if (objMsg.getContentRaw().toLowerCase().contains(Ref.prefix + "clear")) {
-            String samount = objMsg.getContentRaw().replace(Ref.prefix + "clear ", "");
+        if (objMsg.getContentRaw().toLowerCase().contains(prefix + "clear")) {
+            String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
         //Test if amount is Integer
             if ((Ref.isInteger(samount))) {
                 int i = Integer.parseInt(samount) + 1;
@@ -201,14 +202,14 @@ public class App extends ListenerAdapter {
             } else {
                 objUser.openPrivateChannel().queue((channel) ->
                 {   //Notify User via PM
-                    channel.sendMessage("You must make sure you use the clear command correctly '" + Ref.prefix
+                    channel.sendMessage("You must make sure you use the clear command correctly '" + prefix
                             + "clear {amount)', if the format is correct you should make sure you used a valid integer").queue();
                 });
             }
 
         }
 //Delete Message
-        if (objMsg.getContentRaw().contains(Ref.prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
             objMsg.delete().queue();
         }
 
