@@ -1,4 +1,4 @@
-package Discord.bot;
+package disc.bot;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.EmbedBuilder;

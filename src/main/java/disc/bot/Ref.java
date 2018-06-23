@@ -1,4 +1,4 @@
-package Discord.bot;
+package disc.bot;
 
 import java.awt.*;
 
