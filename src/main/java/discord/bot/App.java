@@ -13,12 +13,13 @@ import java.awt.*;
 public class App extends ListenerAdapter {
     public static JDA jda;
     public static String prefix = Ref.getPrefix();
+    public static String token = Ref.getToken();
 
     public static void main(String[] args) throws Exception {
-        jda = new JDABuilder(AccountType.BOT).setToken(Ref.getToken()).buildBlocking();
+        jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
         jda.addEventListener(new App());
         jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
-        System.out.print("done Init \n");
+        System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
     }
 
 
