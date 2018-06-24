@@ -259,6 +259,49 @@ public class App extends ListenerAdapter {
                 objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
             }
         }
+    //RETRIEVE INVITE
+        if (objMsg.getContentRaw().toLowerCase().contains(prefix + "getinvite"))
+        {
+            System.out.print("Cheking Command `getinvite` Permissions \n");
+            if (objUser.getId().equals("167336416861224961")) {
+                System.out.print("Cheking Command `getinvite` Permissions: User correct \n");
+                String msgNoPrfx = objMsg.getContentRaw().replace(prefix + "getinvite ", "");
+                if ((msgNoPrfx.equals("")))
+                {
+                    System.out.print("Cheking Command `getinvite` : Guild ID not specified \n");
+                    objMsgCh.sendMessage("Please specify a guild id do `" + prefix + "botinfo` to get a list of guild with id's").queue();
+                    return;
+                }
+                Guild getServer = jda.getGuildById(msgNoPrfx);
+                if (getServer != null)
+                {
+                    List<TextChannel> channelsInGuild = getServer.getTextChannels();
+                    List<String> invLinks = new ArrayList<String>();
+                    for (TextChannel tChannel : channelsInGuild)
+                    {
+                       Invite tempInv = tChannel.createInvite().complete();
+                       String invLink = tempInv.getURL();
+                       invLinks.add(invLink);
+                    }
+                    if (!(invLinks.isEmpty()))
+                    {
+                        objMsgCh.sendMessage("This is what I could Find: \n" + invLinks.toString()).queue();
+                    }
+                } else
+                {
+                    objMsgCh.sendMessage("Please specify a valid guild id, do `" + prefix + "botinfo` to get a list of guild with id's").queue();
+                    System.out.print("Cheking Command `getinvite` : Invalid Guild ID \n");
+                    return;
+
+                }
+
+            }
+            else
+            {
+                System.out.print("Dev Command from Non-Dev \n");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+            }
+        }
 //Delete Message
         if ((objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
             objMsg.delete().queue();
