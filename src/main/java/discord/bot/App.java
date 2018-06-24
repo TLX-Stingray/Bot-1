@@ -74,19 +74,20 @@ public class App extends ListenerAdapter {
             }
         }
         //Profanity check
-        for (String s : splitStr)
-        {
-            if (badwords.contains(s.toLowerCase()))
-            {
-                System.out.print("Profanity Detected in message by: " + objUser.getName() + " (" + objUser.getId() + ") on server: "
-                                        + guild.getName() + " (" + guild.getId() + ") \n");
-                objUser.openPrivateChannel().queue((channel) ->
-                {
-                    channel.sendMessage("I know you might be mad, but please stop using profanity in your messages :(").queue();
-                    objMsg.delete().queue();
-                });
-            }
-        }
+        //for (String s : splitStr)
+        //{
+        //    if (badwords.contains(s.toLowerCase()))
+        //    {
+        //        System.out.print("Profanity Detected in message by: " + objUser.getName() + " (" + objUser.getId() + ") on server: "
+        //                                + guild.getName() + " (" + guild.getId() + ") \n");
+        //        objUser.openPrivateChannel().queue((channel) ->
+        //        {
+        //            channel.sendMessage("I know you might be mad, but please stop using profanity in your messages :(").queue();
+        //            objMsg.delete().queue();
+        //        });
+        //    }
+        //}
+        
         //Commands
         //HELP
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
