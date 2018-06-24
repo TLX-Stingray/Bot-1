@@ -9,12 +9,12 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.awt.*;
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.net.URL;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class App extends ListenerAdapter {
@@ -29,18 +29,23 @@ public class App extends ListenerAdapter {
         jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
+        ArrayList<String> myDict = new ArrayList<String>();
+        InputStream resourcestream = App.class.getClassLoader().getResourceAsStream(fileName);
+        BufferedReader r = new BufferedReader(new InputStreamReader(resourcestream));
 
-        URL resource = App.class.getClassLoader().getResource(fileName);
-        if (resource == null)
+
+        if (resourcestream == null)
         {
             throw new FileNotFoundException(fileName);
         }
-        else
-        {
-            //Read File Content
-            List<String> strings = Files.readAllLines(new File(resource.getFile()).toPath());
-            badwords = new HashSet<>(strings);
+
+        String line;
+        while ((line=r.readLine()) != null) {
+            myDict.add(line);
         }
+        //Read File Content
+        badwords = new HashSet<>(myDict);
+
 
 
     }
