@@ -95,12 +95,6 @@ public class App extends ListenerAdapter {
             //send help to user via PM
             objUser.openPrivateChannel().queue((channel) ->
             {
-                int i = 20;
-                //Clear PM history
-                for (Message message : channel.getIterableHistory().cache(false)) {
-                    message.delete().queue();
-                    if (--i <= 0) return;
-                }
                 channel.sendMessage(Ref.cmds).queue();
             });
             objMsg.delete().queue();
