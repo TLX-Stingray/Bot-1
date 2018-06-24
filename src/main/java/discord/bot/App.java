@@ -276,17 +276,10 @@ public class App extends ListenerAdapter {
                 if (getServer != null)
                 {
                     List<TextChannel> channelsInGuild = getServer.getTextChannels();
-                    List<String> invLinks = new ArrayList<String>();
-                    for (TextChannel tChannel : channelsInGuild)
-                    {
-                       Invite tempInv = tChannel.createInvite().complete();
-                       String invLink = tempInv.getURL();
-                       invLinks.add(invLink);
-                    }
-                    if (!(invLinks.isEmpty()))
-                    {
-                        objMsgCh.sendMessage("This is what I could Find: \n" + invLinks.toString()).queue();
-                    }
+                    Invite frstInv = channelsInGuild.get(1).createInvite().complete();
+                    String frstLink = frstInv.getURL();
+                    objMsgCh.sendMessage("This is what I coult find --> " + frstLink).queue();
+
                 } else
                 {
                     objMsgCh.sendMessage("Please specify a valid guild id, do `" + prefix + "botinfo` to get a list of guild with id's").queue();
