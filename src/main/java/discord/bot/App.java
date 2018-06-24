@@ -244,6 +244,7 @@ public class App extends ListenerAdapter {
             else
             {
                 System.out.print("Dev Command from Non-Dev \n");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
             }
         }
     //UPDATE CANCEL
@@ -255,6 +256,7 @@ public class App extends ListenerAdapter {
             else
             {
                 System.out.print("Dev Command from Non-Dev \n");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
             }
         }
 //Delete Message
