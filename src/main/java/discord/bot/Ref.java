@@ -17,8 +17,7 @@ public class Ref
                 "Botinfo - Shows info of bot. \n" +
                 "Serverinfo - Shows info About the server \n" +
                 "Channelinfo - shows info of the current text channel \n" +
-                "Clear (amount) - clears the specified amount of message history from the current channel \n" +
-                "Emptychannel - Delete all the accesible messages in the channel ```";
+                "Clear (amount) - clears the specified amount of message history from the current channel```";
 
         public static boolean isInteger(String s) {
                 try {

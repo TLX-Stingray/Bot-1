@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class App extends ListenerAdapter {
@@ -56,6 +57,7 @@ public class App extends ListenerAdapter {
         //Objects
         User objUser = evt.getAuthor();
         MessageChannel objMsgCh = evt.getChannel();
+        TextChannel objtxtMsgCh = evt.getTextChannel();
         Message objMsg = evt.getMessage();
         String lowerMsg = objMsg.getContentRaw().toLowerCase();
         String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
@@ -213,16 +215,6 @@ public class App extends ListenerAdapter {
             //Build and Send Embed
             objMsgCh.sendMessage(seb.build()).queue();
         }
-//EMPTYCHANNEL
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "emptychannel") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " emptychannel")) {
-            //Get History Size
-            int i = objMsgCh.getIterableHistory().complete().size();
-            //Delete messages based on history size
-            for (Message message : objMsgCh.getIterableHistory().cache(false)) {
-                message.delete().queue();
-                if (--i <= 0) return;
-            }
-        }
 //CLEAR
         //Check for Mention
         if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " clear")) {
@@ -237,10 +229,10 @@ public class App extends ListenerAdapter {
             //Test if amount is Integer
             if ((Ref.isInteger(samount))) {
                 int i = Integer.parseInt(samount) + 1;
-                //Delete Message History
-                for (Message message : objMsgCh.getIterableHistory().cache(false)) {
-                    message.delete().queue();
-                    if (--i <= 0) return;
+                if (i <= 100)
+                {
+                    List<Message> retrieved = objtxtMsgCh.getHistory().retrievePast(i).complete();
+                    objtxtMsgCh.deleteMessages(retrieved).queue();
                 }
             } else {
                 objUser.openPrivateChannel().queue((channel) ->
