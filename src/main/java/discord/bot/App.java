@@ -46,9 +46,6 @@ public class App extends ListenerAdapter {
         }
         //Read File Content
         badwords = new HashSet<>(myDict);
-
-
-
     }
 
 
