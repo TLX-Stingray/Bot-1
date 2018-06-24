@@ -95,7 +95,7 @@ public class App extends ListenerAdapter {
             {
                 channel.sendMessage(Ref.cmds).queue();
             });
-            objMsg.delete().queue();
+            if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) objMsg.delete().queue();
         }
 //USERINFO
         //Check for Mention
