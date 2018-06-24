@@ -1,9 +1,6 @@
 package discord.bot;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -87,7 +84,7 @@ public class App extends ListenerAdapter {
         //        });
         //    }
         //}
-        
+
         //Commands
         //HELP
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
@@ -216,7 +213,7 @@ public class App extends ListenerAdapter {
             });
         }
         //Execute command
-        if (objMsg.getContentRaw().toLowerCase().contains(prefix + "clear")) {
+        if (objMsg.getContentRaw().toLowerCase().contains(prefix + "clear") && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
             String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
             //Test if amount is Integer
             if ((Ref.isInteger(samount))) {
@@ -261,7 +258,7 @@ public class App extends ListenerAdapter {
             }
         }
 //Delete Message
-        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+        if ((objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
             objMsg.delete().queue();
         }
 
