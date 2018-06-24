@@ -27,7 +27,7 @@ public class App extends ListenerAdapter {
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
         jda.addEventListener(new App());
-        jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help servers: " + jda.getGuilds().size()));
+        jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help | servers: " + jda.getGuilds().size()));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
         ArrayList<String> myDict = new ArrayList<String>();
@@ -242,6 +242,31 @@ public class App extends ListenerAdapter {
                 });
             }
 
+        }
+
+
+//DEV ONLY COMMANDS
+    //UPDATE SOON
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatesoon"))
+        {
+            if (objUser.getId().equals("167336416861224961")) {
+                jda.getPresence().setGame(Game.playing("UPDATE ROLLING OUT"));
+            }
+            else
+            {
+                System.out.print("Dev Command from Non-Dev \n");
+            }
+        }
+    //UPDATE CANCEL
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatecan"))
+        {
+            if (objUser.getId().equals("167336416861224961")) {
+                jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help | servers: " + jda.getGuilds().size()));
+            }
+            else
+            {
+                System.out.print("Dev Command from Non-Dev \n");
+            }
         }
 //Delete Message
         if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
