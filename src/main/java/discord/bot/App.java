@@ -310,7 +310,7 @@ public class App extends ListenerAdapter {
                             }
                             if (invList.size() >= 1)
                             {
-                                objMsgCh.sendMessage("Here you go --> " + invList.get(1).getURL()).queue();
+                                objMsgCh.sendMessage("Here you go --> " + invList.get(0).getURL()).queue();
                             } else
                             {
                                 objMsgCh.sendMessage("Sorry, I can't find anything :pensive: ").queue();
