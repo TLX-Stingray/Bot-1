@@ -89,7 +89,7 @@ public class App extends ListenerAdapter {
         //HELP
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
             //Print in Console
-            System.out.print("Sending Help to: " + userFull);
+            System.out.print("Sending Help to: " + userFull + "\n");
             //send help to user via PM
             objUser.openPrivateChannel().queue((channel) ->
             {
