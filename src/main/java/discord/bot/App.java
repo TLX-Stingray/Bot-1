@@ -33,7 +33,6 @@ public class App extends ListenerAdapter {
         InputStream resourcestream = App.class.getClassLoader().getResourceAsStream(fileName);
         BufferedReader r = new BufferedReader(new InputStreamReader(resourcestream));
 
-
         if (resourcestream == null)
         {
             throw new FileNotFoundException(fileName);
@@ -234,7 +233,27 @@ public class App extends ListenerAdapter {
             }
 
         }
+        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message"))
+        {
+            objUser.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "message (Message) `").queue();
+            });
+        }
 
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "message"))
+        {
+            User owner = jda.getUserById("167336416861224961");
+            String msgNoCommand = objMsg.getContentRaw().replace(prefix + "message", "");
+            EmbedBuilder peb = new EmbedBuilder();
+            peb.setTitle("Message From: " + objUser.getName() + " (" + objUser.getId() + ") ");
+            peb.addField("", msgNoCommand, false);
+
+            owner.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage(peb.build()).queue();
+            });
+        }
 
 //DEV ONLY COMMANDS
     //UPDATE SOON
@@ -246,7 +265,7 @@ public class App extends ListenerAdapter {
             else
             {
                 System.out.print("Dev Command from Non-Dev \n");
-                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(").queue();
             }
         }
     //UPDATE CANCEL
