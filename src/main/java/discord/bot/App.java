@@ -33,13 +33,12 @@ public class App extends ListenerAdapter {
         InputStream resourcestream = App.class.getClassLoader().getResourceAsStream(fileName);
         BufferedReader r = new BufferedReader(new InputStreamReader(resourcestream));
 
-        if (resourcestream == null)
-        {
+        if (resourcestream == null) {
             throw new FileNotFoundException(fileName);
         }
 
         String line;
-        while ((line=r.readLine()) != null) {
+        while ((line = r.readLine()) != null) {
             myDict.add(line);
         }
         //Read File Content
@@ -156,7 +155,7 @@ public class App extends ListenerAdapter {
             //Retrieved server list
             //add Fields
             seb.addField("Server Count:", Integer.toString(jda.getGuilds().size()), false);
-            seb.addField("Uptime:" , GetUptime.getUptime(), false);
+            seb.addField("Uptime:", GetUptime.getUptime(), false);
             //Build and Send Embed
             objMsgCh.sendMessage(seb.build()).queue();
         }
@@ -216,8 +215,7 @@ public class App extends ListenerAdapter {
             //Test if amount is Integer
             if ((Ref.isInteger(samount))) {
                 int i = Integer.parseInt(samount) + 1;
-                if (i <= 100)
-                {
+                if (i <= 100) {
                     List<Message> retrieved = objtxtMsgCh.getHistory().retrievePast(i).complete();
                     objtxtMsgCh.deleteMessages(retrieved).queue();
                 }
@@ -232,16 +230,14 @@ public class App extends ListenerAdapter {
         }
 //MESSAGE COMMAND
         //Check for Mention
-        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message"))
-        {
+        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message")) {
             objUser.openPrivateChannel().queue((channel) ->
             {
                 channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "message (Message) `").queue();
             });
         }
 
-        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "message"))
-        {
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "message")) {
             User owner = jda.getUserById("167336416861224961");
             String msgNoCommand = objMsg.getContentRaw().replace(prefix + "message", "");
             EmbedBuilder peb = new EmbedBuilder();
@@ -255,38 +251,90 @@ public class App extends ListenerAdapter {
         }
 
 //DEV ONLY COMMANDS
-    //UPDATE SOON
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatesoon"))
-        {
+        //UPDATE SOON
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatesoon")) {
             if (objUser.getId().equals("167336416861224961")) {
                 jda.getPresence().setGame(Game.playing("UPDATE ROLLING OUT"));
-            }
-            else
-            {
+            } else {
                 System.out.print("Dev Command from Non-Dev \n");
                 objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(").queue();
             }
         }
-    //UPDATE CANCEL
-        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatecan"))
-        {
+        //UPDATE CANCEL
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatecan")) {
             if (objUser.getId().equals("167336416861224961")) {
                 jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help | servers: " + jda.getGuilds().size()));
-            }
-            else
-            {
+            } else {
                 System.out.print("Dev Command from Non-Dev \n");
                 objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
             }
         }
+        //SERVERLIST
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverlist")) {
+            if (objUser.getId().equals("167336416861224961")) {
+                String finalList = "";
+                for (Guild gld : jda.getGuilds()) {
+                    finalList += gld.getName() + " (" + gld.getId() + ") \n";
+                }
+                EmbedBuilder eServers = new EmbedBuilder();
+                eServers.setTitle("Serverinfo of " + jda.getSelfUser().getName());
+                eServers.setColor(Color.RED);
+                eServers.addField("Server List:", finalList, false);
+
+                objMsgCh.sendMessage(eServers.build()).queue();
+            } else {
+                System.out.print("Dev Command from Non-Dev \n");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+            }
+        }
+        //GETINVITE
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "getinvite")) {
+            if (objUser.getId().equals("167336416861224961"))
+            {
+                String supGuildId = objMsg.getContentRaw().replace(prefix + "getinvite ", "");
+                if (!supGuildId.isEmpty())
+                {
+                    if (jda.getGuildById(supGuildId).isAvailable())
+                    {
+                        Guild getInvFrom = jda.getGuildById(supGuildId);
+                        if (jda.getGuilds().contains(getInvFrom))
+                        {
+                            List<Invite> invList = new ArrayList<>();
+                            List<TextChannel> txtChList = getInvFrom.getTextChannels();
+                            for (TextChannel tc : txtChList)
+                            {
+                                if (getInvFrom.getMember(jda.getSelfUser()).hasPermission(tc, Permission.CREATE_INSTANT_INVITE))
+                                {
+                                    invList.add(tc.createInvite().complete());
+                                }
+                            }
+                            if (invList.size() >= 1)
+                            {
+                                objMsgCh.sendMessage("Here you go --> " + invList.get(1).getURL()).queue();
+                            } else
+                            {
+                                objMsgCh.sendMessage("Sorry, I can't find anything :pensive: ").queue();
+                            }
+                        }
+                    }
+                }
+            } else {
+                System.out.print("Dev Command from Non-Dev \n");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+            }
+        }
+
 //Delete Message
         if ((objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
             objMsg.delete().queue();
         }
 
+
     }
-
-
 }
+
+
+
+
 
 
