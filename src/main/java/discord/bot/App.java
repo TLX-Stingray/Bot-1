@@ -154,12 +154,9 @@ public class App extends ListenerAdapter {
             seb.setTitle("Server info of: " + jda.getSelfUser().getName() + " running on " + jda.getGuilds().size() + " servers");
             seb.setColor(Color.RED);
             //Retrieved server list
-            String Serverlist = "";
-            for (Guild g : evt.getJDA().getGuilds()) {
-                Serverlist += g.getName() + " (" + g.getId() + ") \n";
-            }
             //add Fields
-            seb.addField("Server List:", Serverlist, false);
+            seb.addField("Server Count:", Integer.toString(jda.getGuilds().size()), false);
+            seb.addField("Uptime:" , GetUptime.getUptime(), false);
             //Build and Send Embed
             objMsgCh.sendMessage(seb.build()).queue();
         }
@@ -233,6 +230,8 @@ public class App extends ListenerAdapter {
             }
 
         }
+//MESSAGE COMMAND
+        //Check for Mention
         if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message"))
         {
             objUser.openPrivateChannel().queue((channel) ->
