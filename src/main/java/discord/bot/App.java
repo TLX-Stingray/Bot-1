@@ -275,10 +275,17 @@ public class App extends ListenerAdapter {
                 Guild getServer = jda.getGuildById(msgNoPrfx);
                 if (getServer != null)
                 {
-                    List<TextChannel> channelsInGuild = getServer.getTextChannels();
-                    Invite frstInv = channelsInGuild.get(1).createInvite().complete();
-                    String frstLink = frstInv.getURL();
-                    objMsgCh.sendMessage("This is what I coult find --> " + frstLink).queue();
+                    if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.CREATE_INSTANT_INVITE))
+                    {
+                        List<TextChannel> channelsInGuild = getServer.getTextChannels();
+                        Invite frstInv = channelsInGuild.get(1).createInvite().complete();
+                        String frstLink = frstInv.getURL();
+                        objMsgCh.sendMessage("This is what I coult find --> " + frstLink).queue();
+                    }
+                    else
+                    {
+                        objMsgCh.sendMessage("Sorry I don't have permission to do that").queue();
+                    }
 
                 } else
                 {
@@ -292,7 +299,7 @@ public class App extends ListenerAdapter {
             else
             {
                 System.out.print("Dev Command from Non-Dev \n");
-                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+                objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(").queue();
             }
         }
 //Delete Message
