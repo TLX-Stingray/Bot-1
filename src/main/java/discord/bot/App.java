@@ -16,7 +16,7 @@ public class App extends ListenerAdapter {
     public static String prefix = Ref.getPrefix();
     public static String token = Ref.getToken();
     public static Set<String> badwords;
-    public static String testPrefix = "{ALPHA}";
+    public static String storeMod = System.getenv("STORAGE_MODIFIER");
 
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
@@ -55,7 +55,7 @@ public class App extends ListenerAdapter {
             String str = objMsg.getContentRaw();
             String[] splitStr = str.trim().split("\\s+");
             Properties guildproperties = new Properties();
-            File propFile = new File(guild.getId() + ".properties");
+            File propFile = new File(storeMod + guild.getId() + ".properties");
             Boolean propExists;
             if (propFile.exists()) {
                 propExists = true;
@@ -113,20 +113,27 @@ public class App extends ListenerAdapter {
             //CREATE
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "properties create")) {
                 if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
-                    try {
-                        Properties properties = new Properties();
-                        properties.setProperty("Profanity", "false");
-                        properties.setProperty("WelcomeMessage", "false");
-                        properties.setProperty("AutoRoleOn", "false");
+                    Properties properties = new Properties();
+                    File file = new File(storeMod + guild.getId() + ".properties");
 
-                        File file = new File(guild.getId() + ".properties");
-                        FileOutputStream fileOut = new FileOutputStream(file);
-                        properties.store(fileOut, "Server Settings");
-                        fileOut.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (!file.exists()) {
+                        try {
+                            FileOutputStream fileOut = new FileOutputStream(file);
+                            properties.setProperty("Profanity", "false");
+                            properties.setProperty("WelcomeMessage", "false");
+                            properties.setProperty("AutoRoleOn", "false");
+
+                            properties.store(fileOut, "Server Settings");
+                            fileOut.close();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        objMsgCh.sendMessage("Properties Initialized Success").queue();
+                    } else
+                    {
+                        objMsgCh.sendMessage("Properties was already initialized").queue();
                     }
                 } else {
                     objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
@@ -467,7 +474,7 @@ public class App extends ListenerAdapter {
     {
         Guild guild = evt.getGuild();
         Properties guildproperties = new Properties();
-        File propFile = new File(guild.getId() + ".properties");
+        File propFile = new File(storeMod + guild.getId() + ".properties");
         Boolean propExists;
         if (propFile.exists()) {
             propExists = true;
