@@ -5,7 +5,8 @@ public class HelpSys {
     {
         String HelpString = "";
         HelpString  = "__**Command List for " + App.jda.getSelfUser().getName() + ":**__ \n";
-        HelpString += "All Commands work with the bot Prefix \n";
+        HelpString += "Make sure to join the support server for updates and help --> https://discord.gg/XEbBn6a \n";
+        HelpString += "All Commands work with the bot Prefix (default is `{}`) \n";
         HelpString += "Only some commands work by mentioning the bot, those commands are marked with :lips: \n";
         HelpString += " \n";
         HelpString += "**Userinfo @[user]** - Shows info about mentioned user, if no-one is mentioned the bot will return info about the sender. \n";
