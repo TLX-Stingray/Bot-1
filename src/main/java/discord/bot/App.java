@@ -147,19 +147,25 @@ public class App extends ListenerAdapter {
                     if (propExists) {
                         String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config autorole ", "");
                         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                            guildproperties.setProperty("AutoRoleOn", value);
-                            try {
-                                FileOutputStream fileOut = new FileOutputStream(propFile);
-                                guildproperties.store(fileOut, "Updated Settings");
-                                fileOut.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MANAGE_ROLES)) {
+                                guildproperties.setProperty("AutoRoleOn", value);
+                                try {
+                                    FileOutputStream fileOut = new FileOutputStream(propFile);
+                                    guildproperties.store(fileOut, "Updated Settings");
+                                    fileOut.close();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                EmbedBuilder reb = new EmbedBuilder();
+                                String msgValue = value;
+                                if (value.equalsIgnoreCase("true"))
+                                    msgValue = value + ", make sure to set your autorole by using `config setautorole [Role Name]`";
+                                reb.addField("AutoRole set to:", msgValue, false);
+                                objMsgCh.sendMessage(reb.build()).queue();
+                            }else if (value.equalsIgnoreCase("true")) {
+                                objMsgCh.sendMessage("Sorry, I need `MANAGE_ROLES` to be able to do Autorole").queue();
                             }
-                            EmbedBuilder reb = new EmbedBuilder();
-                            String msgValue = value;
-                            if (value.equalsIgnoreCase("true")) msgValue = value + ", make sure to set your autorole by using `config setautorole [Role Name]`";
-                            reb.addField("AutoRole set to:", msgValue, false);
-                            objMsgCh.sendMessage(reb.build()).queue();
+
 
                         } else {
                             objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
@@ -176,21 +182,36 @@ public class App extends ListenerAdapter {
             if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config setautorole"))
             {
                 String roleName = objMsg.getContentRaw().toLowerCase().replace(prefix + "config setautorole ", "");
-                if (guild.getRolesByName(roleName, true).get(0) != null)
+                if (guild.getRolesByName(roleName, true).size() >= 1)
                 {
-                    Role autoRole = guild.getRolesByName(roleName, true).get(0);
-                    guildproperties.setProperty("AutoRole" , autoRole.getId());
-                    try {
-                        FileOutputStream fileOut = new FileOutputStream(propFile);
-                        guildproperties.store(fileOut, "Updated Settings");
-                        fileOut.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    List<Role> autoRoleResults= new ArrayList<>();
+                    autoRoleResults = guild.getRolesByName(roleName, true);
+                    Role autoRole = autoRoleResults.get(0);
+                    List<Role> botRoles = new ArrayList<>();
+                    botRoles = guild.getMember(jda.getSelfUser()).getRoles();
+                    Role botHighestRole = botRoles.get(0);
+                    Integer botHRpos = botHighestRole.getPosition();
+                    Integer autoRolePos = autoRole.getPosition();
+                    if (autoRolePos < botHRpos) {
+                        guildproperties.setProperty("AutoRole", autoRole.getId());
+                        try {
+                            FileOutputStream fileOut = new FileOutputStream(propFile);
+                            guildproperties.store(fileOut, "Updated Settings");
+                            fileOut.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        EmbedBuilder reb = new EmbedBuilder();
+                        reb.setTitle("Set Autorole to:");
+                        reb.setDescription(autoRole.getName());
+                        objMsgCh.sendMessage(reb.build()).queue();
+                    } else {
+                        objMsgCh.sendMessage("Sorry, I can't use a role higher than or equal to `" + botHighestRole.getName() + "`").queue();
                     }
-                    EmbedBuilder reb = new EmbedBuilder();
-                    reb.setTitle("Set Autorole to:");
-                    reb.setDescription(autoRole.getName());
-                    objMsgCh.sendMessage(reb.build()).queue();
+
+                }else
+                {
+                    objMsgCh.sendMessage("Sorry, I can't find `" + roleName + "`").queue();
                 }
             }
             //WELCOMEMESSAGE
@@ -233,18 +254,20 @@ public class App extends ListenerAdapter {
             welcomeChannel = welcomeChannel.replace(">", "");
             if (guild.getTextChannelById(welcomeChannel) != null)
             {
-                guildproperties.setProperty("WelcomeChannel", welcomeChannel);
-                try {
-                    FileOutputStream fileOut = new FileOutputStream(propFile);
-                    guildproperties.store(fileOut, "Updated Settings");
-                    fileOut.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (guild.getMember(jda.getSelfUser()).hasPermission(guild.getTextChannelById(welcomeChannel), Permission.MESSAGE_MANAGE)) {
+                    guildproperties.setProperty("WelcomeChannel", welcomeChannel);
+                    try {
+                        FileOutputStream fileOut = new FileOutputStream(propFile);
+                        guildproperties.store(fileOut, "Updated Settings");
+                        fileOut.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    EmbedBuilder reb = new EmbedBuilder();
+                    String msgValue = guild.getTextChannelById(welcomeChannel).getName();
+                    reb.addField("Welcome Message Channel set to:", msgValue, false);
+                    objMsgCh.sendMessage(reb.build()).queue();
                 }
-                EmbedBuilder reb = new EmbedBuilder();
-                String msgValue = guild.getTextChannelById(welcomeChannel).getName();
-                reb.addField("Welcome Message Channel set to:", msgValue, false);
-                objMsgCh.sendMessage(reb.build()).queue();
             }
         }
 //USERINFO
@@ -302,10 +325,19 @@ public class App extends ListenerAdapter {
                 EmbedBuilder seb = new EmbedBuilder();
                 seb.setTitle("Server info of: " + jda.getSelfUser().getName() + " running on " + jda.getGuilds().size() + " servers");
                 seb.setColor(Color.RED);
+                //Get Bot Roles
+                List<Role> botRoles = new ArrayList<>();
+                botRoles = guild.getMember(jda.getSelfUser()).getRoles();
+                String botRolesString = "";
+                for (Role r : botRoles)
+                {
+                    botRolesString += r.getName() + "\n";
+                }
                 //Retrieved server list
                 //add Fields
                 seb.addField("Server Count:", Integer.toString(jda.getGuilds().size()), false);
                 seb.addField("Uptime:", GetUptime.getUptime(), false);
+                seb.addField("Roles:", botRolesString, false);
                 //Build and Send Embed
                 objMsgCh.sendMessage(seb.build()).queue();
             }
@@ -508,6 +540,14 @@ public class App extends ListenerAdapter {
                     TextChannel welcomeChannel = guild.getTextChannelById(welcomeChannelS);
                     welcomeChannel.sendMessage(Message).queue();
                 }
+            }
+
+            String autoRoleOn = guildproperties.getProperty("AutoRoleOn");
+            if (guildproperties.containsKey("AutoRole"))
+            {
+                String roleId = guildproperties.getProperty("AutoRole");
+                Role AutoRole = guild.getRoleById(roleId);
+                guild.getController().addRolesToMember(evt.getMember(), AutoRole).queue();
             }
         }
     }
