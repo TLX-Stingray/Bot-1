@@ -65,7 +65,9 @@ public class App extends ListenerAdapter {
                 } catch (Exception e) {
                     System.out.print(e.getStackTrace().toString() + "/n");
                 }
-
+                if (guildproperties.containsKey("Prefix")) {
+                    prefix = guildproperties.getProperty("Prefix");
+                }
             } else {
                 propExists = false;
             }
@@ -101,6 +103,12 @@ public class App extends ListenerAdapter {
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
                 objMsgCh.sendMessage(HelpSys.buildGeneralHelp()).queue();
             }
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "prefix") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " prefix")) {
+            EmbedBuilder preb = new EmbedBuilder();
+            preb.setTitle("Your prefix is: ");
+            preb.setDescription(prefix);
+            objMsgCh.sendMessage(preb.build()).queue();
+        }
 //Config
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config"))
             {
@@ -283,7 +291,7 @@ public class App extends ListenerAdapter {
                     objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
             } else {
-                objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
         //WELCOMECHANNEL
@@ -315,7 +323,7 @@ public class App extends ListenerAdapter {
                     objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
             }else {
-                objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
         //DELCOMMANDS
@@ -338,11 +346,54 @@ public class App extends ListenerAdapter {
                     } else {
                         objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
                     }
-                } else {
-                    objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
+                } else{
+                    objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
+                }
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+            }
+        }
+
+        //PREFIX
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config prefix")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists) {
+                    String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config prefix ", "") ;
+                    if (!(value.equalsIgnoreCase("") ||value.equalsIgnoreCase(":config prefix"))) {
+                        if (!(value.equalsIgnoreCase(Ref.getPrefix()))) {
+                            guildproperties.setProperty("Prefix", value);
+                            try {
+                                FileOutputStream fileOut = new FileOutputStream(propFile);
+                                guildproperties.store(fileOut, "Updated Settings");
+                                fileOut.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            EmbedBuilder reb = new EmbedBuilder();
+                            reb.addField("Prefix set to", value + "\n make sure you remember the new prefix, you can always see what it is by mentioning the bot together with the `prefix` command", false);
+                            objMsgCh.sendMessage(reb.build()).queue();
+                        } else if (value.equalsIgnoreCase(Ref.getPrefix()))
+                        {
+                            guildproperties.remove("Prefix");
+                            try {
+                                FileOutputStream fileOut = new FileOutputStream(propFile);
+                                guildproperties.store(fileOut, "Updated Settings");
+                                fileOut.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            EmbedBuilder reb = new EmbedBuilder();
+                            reb.addField("Prefix set to ", Ref.getPrefix() + "   (default prefix)", false);
+                            objMsgCh.sendMessage(reb.build()).queue();
+                        }
+                    } else {
+                        objMsgCh.sendMessage("Please Specify a valid prefix").queue();
+                    }
+                } else{
+                    objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
             } else{
-                objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
 //USERINFO

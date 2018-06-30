@@ -9,6 +9,7 @@ public class HelpSys {
         HelpString += "All Commands work with the bot Prefix (default is `{}`) \n";
         HelpString += "Only some commands work by mentioning the bot, those commands are marked with :lips: \n";
         HelpString += " \n";
+        HelpString += "**Prefix** - (:lips:) Shows you what the current bot prefix is \n";
         HelpString += "**Userinfo @[user]** - Shows info about mentioned user, if no-one is mentioned the bot will return info about the sender. \n";
         HelpString += "**Botinfo** - (:lips:) Shows info about the bot, maybe you want to know it... \n";
         HelpString += "**Serverinfo** - (:lips:) Shows info about the current server, it's only public info, don't worry \n";
@@ -35,6 +36,7 @@ public class HelpSys {
         ConfigHelp += "**Autorole** - valid values are `true` and `false`, autorole gives every new member a role on join \n";
         ConfigHelp += "**setAutorole** - valid values are Role names (NOT MENTIONS), sets the role to give to new members, searches for a role with a matching name \n";
         ConfigHelp += "**delcommands** - valid values are `true` and `false`, if this setting is true it will delete the messages users send to execute commands providing the bot has the `MESSAGE_MANAGE` permission \n";
+        ConfigHelp += "**Prefix** - changes the bot prefix for your server only \n";
 
         return ConfigHelp;
     }
