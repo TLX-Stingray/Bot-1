@@ -28,6 +28,7 @@ public class HelpSys {
         ConfigHelp += "Please note that square brackets should be your value for example: \n `config welcomechannel #[Textchannel]` will become `config welcomechannel #general` \n";
         ConfigHelp += " \n";
         ConfigHelp += "**create** - initializes the config system for your server and defaults all values to `false`, do this first \n";
+        ConfigHelp += "**get** - get current config values for the current server \n";
         ConfigHelp += "**welcomemessage** - valid values are `true` and `false` , turns the Welcome Message service on/off \n";
         ConfigHelp += "**welcomechannel** - valid values are #[Textchannel], sets the desired channel for the welcome messages \n";
         ConfigHelp += "**Autorole** - valid values are `true` and `false`, autorole gives every new member a role on join \n";
