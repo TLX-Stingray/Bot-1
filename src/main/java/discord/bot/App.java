@@ -21,7 +21,7 @@ public class App extends ListenerAdapter {
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
         jda.addEventListener(new App());
-        jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help | servers: " + jda.getGuilds().size()));
+        jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " | help"));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
         ArrayList<String> myDict = new ArrayList<String>();
@@ -124,6 +124,7 @@ public class App extends ListenerAdapter {
                             properties.setProperty("Profanity", "false");
                             properties.setProperty("WelcomeMessage", "false");
                             properties.setProperty("AutoRoleOn", "false");
+                            properties.setProperty("DelCommands", "false");
 
                             properties.store(fileOut, "Server Settings");
                             fileOut.close();
@@ -249,25 +250,60 @@ public class App extends ListenerAdapter {
         //WELCOMECHANNEL
         if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config welcomechannel"))
         {
-            String welcomeChannel = objMsg.getContentRaw().toLowerCase().replace(prefix + "config welcomechannel ", "");
-            welcomeChannel = welcomeChannel.replace("<#", "");
-            welcomeChannel = welcomeChannel.replace(">", "");
-            if (guild.getTextChannelById(welcomeChannel) != null)
-            {
-                if (guild.getMember(jda.getSelfUser()).hasPermission(guild.getTextChannelById(welcomeChannel), Permission.MESSAGE_MANAGE)) {
-                    guildproperties.setProperty("WelcomeChannel", welcomeChannel);
-                    try {
-                        FileOutputStream fileOut = new FileOutputStream(propFile);
-                        guildproperties.store(fileOut, "Updated Settings");
-                        fileOut.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists){
+                    String welcomeChannel = objMsg.getContentRaw().toLowerCase().replace(prefix + "config welcomechannel ", "");
+                    welcomeChannel = welcomeChannel.replace("<#", "");
+                    welcomeChannel = welcomeChannel.replace(">", "");
+                    if (guild.getTextChannelById(welcomeChannel) != null) {
+                        if (guild.getMember(jda.getSelfUser()).hasPermission(guild.getTextChannelById(welcomeChannel), Permission.MESSAGE_MANAGE)) {
+                            guildproperties.setProperty("WelcomeChannel", welcomeChannel);
+                            try {
+                                FileOutputStream fileOut = new FileOutputStream(propFile);
+                                guildproperties.store(fileOut, "Updated Settings");
+                                fileOut.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            EmbedBuilder reb = new EmbedBuilder();
+                            String msgValue = guild.getTextChannelById(welcomeChannel).getName();
+                            reb.addField("Welcome Message Channel set to:", msgValue, false);
+                            objMsgCh.sendMessage(reb.build()).queue();
+                        }
                     }
-                    EmbedBuilder reb = new EmbedBuilder();
-                    String msgValue = guild.getTextChannelById(welcomeChannel).getName();
-                    reb.addField("Welcome Message Channel set to:", msgValue, false);
-                    objMsgCh.sendMessage(reb.build()).queue();
+                } else
+                {
+                    objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
+            }else {
+                objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
+            }
+        }
+        //DELCOMMANDS
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config delcommands")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists) {
+                    String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config delcommands ", "");
+                    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                        guildproperties.setProperty("DelCommands", value);
+                        try {
+                            FileOutputStream fileOut = new FileOutputStream(propFile);
+                            guildproperties.store(fileOut, "Updated Settings");
+                            fileOut.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        EmbedBuilder reb = new EmbedBuilder();
+                        reb.addField("Delcommands set to", value, false);
+                        objMsgCh.sendMessage(reb.build()).queue();
+                    } else {
+                        objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
+                    }
+                } else {
+                    objMsgCh.sendMessage("You need `ADMINISTRTOR` to use this command").queue();
+                }
+            } else{
+                objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
             }
         }
 //USERINFO
@@ -445,7 +481,7 @@ public class App extends ListenerAdapter {
             //UPDATE CANCEL
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatecan")) {
                 if (objUser.getId().equals("167336416861224961")) {
-                    jda.getPresence().setGame(Game.playing("Prefix: " + prefix + " | use " + prefix + "help | servers: " + jda.getGuilds().size()));
+                    jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " | help"));
                 } else {
                     System.out.print("Dev Command from Non-Dev \n");
                     objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
@@ -499,8 +535,26 @@ public class App extends ListenerAdapter {
             }
 
 //Delete Message
-            if ((objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
-                objMsg.delete().queue();
+            String delCommands = "";
+            if (guildproperties.containsKey("DelCommands")) {delCommands = guildproperties.getProperty("DelCommands");}
+            else
+            {
+                guildproperties.setProperty("DelCommands", "true");
+                try {
+                    FileOutputStream fileOut = new FileOutputStream(propFile);
+                    guildproperties.store(fileOut, "Updated Settings");
+                    fileOut.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                delCommands = "false";
+            }
+            if (delCommands.equalsIgnoreCase("true"))
+            {
+                if (objMsg.getContentRaw().toLowerCase().contains(prefix))
+                {
+                    objMsg.delete().queue();
+                }
             }
 
 

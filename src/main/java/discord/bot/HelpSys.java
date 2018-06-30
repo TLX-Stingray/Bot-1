@@ -32,6 +32,7 @@ public class HelpSys {
         ConfigHelp += "**welcomechannel** - valid values are #[Textchannel], sets the desired channel for the welcome messages \n";
         ConfigHelp += "**Autorole** - valid values are `true` and `false`, autorole gives every new member a role on join \n";
         ConfigHelp += "**setAutorole** - valid values are Role names (NOT MENTIONS), sets the role to give to new members, searches for a role with a matching name \n";
+        ConfigHelp += "**delcommands** - valid values are `true` and `false`, if this setting is true it will delete the messages users send to execute commands providing the bot has the `MESSAGE_MANAGE` permission \n";
 
         return ConfigHelp;
     }
