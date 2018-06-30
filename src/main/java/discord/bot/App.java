@@ -21,7 +21,7 @@ public class App extends ListenerAdapter {
     public static void main(String[] args) throws Exception {
         jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
         jda.addEventListener(new App());
-        jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " | help"));
+        jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " Servers | help"));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
         ArrayList<String> myDict = new ArrayList<String>();
@@ -578,15 +578,20 @@ public class App extends ListenerAdapter {
             if (guildproperties.containsKey("DelCommands")) {delCommands = guildproperties.getProperty("DelCommands");}
             else
             {
-                guildproperties.setProperty("DelCommands", "true");
-                try {
-                    FileOutputStream fileOut = new FileOutputStream(propFile);
-                    guildproperties.store(fileOut, "Updated Settings");
-                    fileOut.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (propExists) {
+                    guildproperties.setProperty("DelCommands", "true");
+                    try {
+                        FileOutputStream fileOut = new FileOutputStream(propFile);
+                        guildproperties.store(fileOut, "Updated Settings");
+                        fileOut.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    delCommands = "false";
+                } else
+                {
+                    delCommands = "true";
                 }
-                delCommands = "false";
             }
             if (delCommands.equalsIgnoreCase("true"))
             {
