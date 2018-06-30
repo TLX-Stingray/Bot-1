@@ -121,7 +121,7 @@ public class App extends ListenerAdapter {
                     if (!file.exists()) {
                         try {
                             FileOutputStream fileOut = new FileOutputStream(file);
-                            properties.setProperty("Profanity", "false");
+                            properties.setProperty("ProfanityFilter", "false");
                             properties.setProperty("WelcomeMessage", "false");
                             properties.setProperty("AutoRoleOn", "false");
                             properties.setProperty("DelCommands", "false");
@@ -139,6 +139,45 @@ public class App extends ListenerAdapter {
                         objMsgCh.sendMessage("Config was already initialized").queue();
                     }
                 } else {
+                    objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+                }
+            }
+            //GET
+            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config get"))
+            {
+                if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)){
+                    if (propExists)
+                    {
+                        String properties = "";
+                        for (String s : guildproperties.stringPropertyNames())
+                        {
+                            if (s.equalsIgnoreCase("AutoRole"))
+                            {
+                                Role autorole = guild.getRoleById(guildproperties.getProperty(s));
+                                properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + autorole.getName() + ") \n";
+                            } else if (s.equalsIgnoreCase("WelcomeChannel"))
+                            {
+                                TextChannel welcomechannel = guild.getTextChannelById(guildproperties.getProperty(s));
+                                properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + welcomechannel.getAsMention() + ") \n";
+                            } else {
+                                properties += "**" + s + "** = " + guildproperties.getProperty(s) + " \n";
+                            }
+
+                        }
+                        EmbedBuilder peb = new EmbedBuilder();
+                        peb.setTitle("Current Properties for " + jda.getSelfUser().getName());
+                        peb.setDescription("This is the current properties for " + jda.getSelfUser().getName() + " on " + guild.getName());
+                        peb.addField("", properties, false);
+                        peb.setColor(Color.RED);
+
+                        objMsgCh.sendMessage(peb.build()).queue();
+
+                    }else
+                    {
+                        objMsgCh.sendMessage("Please Initiate the properties file with `config create`").queue();
+                    }
+                } else
+                {
                     objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
                 }
             }
