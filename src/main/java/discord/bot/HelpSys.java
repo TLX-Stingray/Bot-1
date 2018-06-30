@@ -30,6 +30,8 @@ public class HelpSys {
         ConfigHelp += "**create** - initializes the config system for your server and defaults all values to `false`, do this first \n";
         ConfigHelp += "**welcomemessage** - valid values are `true` and `false` , turns the Welcome Message service on/off \n";
         ConfigHelp += "**welcomechannel** - valid values are #[Textchannel], sets the desired channel for the welcome messages \n";
+        ConfigHelp += "**Autorole** - valid values are `true` and `false`, autorole gives every new member a role on join \n";
+        ConfigHelp += "**setAutorole** - valid values are Role names (NOT MENTIONS), sets the role to give to new members, searches for a role with a matching name \n";
 
         return ConfigHelp;
     }
