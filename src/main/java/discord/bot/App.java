@@ -42,67 +42,66 @@ public class App extends ListenerAdapter {
 
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent evt)
-    {
-            //Objects
-            User objUser = evt.getAuthor();
-            MessageChannel objMsgCh = evt.getChannel();
-            TextChannel objtxtMsgCh = evt.getTextChannel();
-            Message objMsg = evt.getMessage();
-            String lowerMsg = objMsg.getContentRaw().toLowerCase();
-            String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
-            Guild guild = evt.getGuild();
-            String str = objMsg.getContentRaw();
-            String[] splitStr = str.trim().split("\\s+");
-            Properties guildproperties = new Properties();
-            File propFile = new File(storeMod + guild.getId() + ".properties");
-            Boolean propExists;
-            if (propFile.exists()) {
-                propExists = true;
-                try {
-                    FileInputStream propIn = new FileInputStream(propFile.getPath());
-                    guildproperties.load(propIn);
-                } catch (Exception e) {
-                    System.out.print(e.getStackTrace().toString() + "/n");
-                }
-                if (guildproperties.containsKey("Prefix")) {
-                    prefix = guildproperties.getProperty("Prefix");
-                }
+    public void onMessageReceived(MessageReceivedEvent evt) {
+        //Objects
+        User objUser = evt.getAuthor();
+        MessageChannel objMsgCh = evt.getChannel();
+        TextChannel objtxtMsgCh = evt.getTextChannel();
+        Message objMsg = evt.getMessage();
+        String lowerMsg = objMsg.getContentRaw().toLowerCase();
+        String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
+        Guild guild = evt.getGuild();
+        String str = objMsg.getContentRaw();
+        String[] splitStr = str.trim().split("\\s+");
+        Properties guildproperties = new Properties();
+        File propFile = new File(storeMod + guild.getId() + ".properties");
+        Boolean propExists;
+        if (propFile.exists()) {
+            propExists = true;
+            try {
+                FileInputStream propIn = new FileInputStream(propFile.getPath());
+                guildproperties.load(propIn);
+            } catch (Exception e) {
+                System.out.print(e.getStackTrace().toString() + "/n");
+            }
+            if (guildproperties.containsKey("Prefix")) {
+                prefix = guildproperties.getProperty("Prefix");
+            }
+        } else {
+            propExists = false;
+        }
+
+        //Message Validation
+        if (evt.getAuthor().isBot()) return;
+        if (objMsgCh instanceof PrivateChannel) return;
+
+        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+            if (guild != null) {
+                System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
             } else {
-                propExists = false;
+                System.out.print("Received: " + objMsg.getContentRaw() + " on Guild showing NULL \n");
             }
+        }
+        //Profanity check
+        //for (String s : splitStr)
+        //{
+        //    if (badwords.contains(s.toLowerCase()))
+        //    {
+        //        System.out.print("Profanity Detected in message by: " + objUser.getName() + " (" + objUser.getId() + ") on server: "
+        //                                + guild.getName() + " (" + guild.getId() + ") \n");
+        //        objUser.openPrivateChannel().queue((channel) ->
+        //        {
+        //            channel.sendMessage("I know you might be mad, but please stop using profanity in your messages :(").queue();
+        //            objMsg.delete().queue();
+        //        });
+        //    }
+        //}
 
-            //Message Validation
-            if (evt.getAuthor().isBot()) return;
-            if (objMsgCh instanceof PrivateChannel) return;
-
-            if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
-                if (guild != null) {
-                    System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
-                } else {
-                    System.out.print("Received: " + objMsg.getContentRaw() + " on Guild showing NULL \n");
-                }
-            }
-            //Profanity check
-            //for (String s : splitStr)
-            //{
-            //    if (badwords.contains(s.toLowerCase()))
-            //    {
-            //        System.out.print("Profanity Detected in message by: " + objUser.getName() + " (" + objUser.getId() + ") on server: "
-            //                                + guild.getName() + " (" + guild.getId() + ") \n");
-            //        objUser.openPrivateChannel().queue((channel) ->
-            //        {
-            //            channel.sendMessage("I know you might be mad, but please stop using profanity in your messages :(").queue();
-            //            objMsg.delete().queue();
-            //        });
-            //    }
-            //}
-
-            //Commands
-            //HELP
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
-                objMsgCh.sendMessage(HelpSys.buildGeneralHelp()).queue();
-            }
+        //Commands
+        //HELP
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
+            objMsgCh.sendMessage(HelpSys.buildGeneralHelp()).queue();
+        }
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "prefix") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " prefix")) {
             EmbedBuilder preb = new EmbedBuilder();
             preb.setTitle("Your prefix is: ");
@@ -110,161 +109,146 @@ public class App extends ListenerAdapter {
             objMsgCh.sendMessage(preb.build()).queue();
         }
 //Config
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config"))
-            {
-                if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR))
-                {
-                    objMsgCh.sendMessage(HelpSys.buildConfigHelp()).queue();
-                } else
-                {
-                    objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
-                }
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                objMsgCh.sendMessage(HelpSys.buildConfigHelp()).queue();
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
-            //CREATE
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config create")) {
-                if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
-                    Properties properties = new Properties();
-                    File file = new File(storeMod + guild.getId() + ".properties");
+        }
+        //CREATE
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config create")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                Properties properties = new Properties();
+                File file = new File(storeMod + guild.getId() + ".properties");
 
-                    if (!file.exists()) {
-                        try {
-                            FileOutputStream fileOut = new FileOutputStream(file);
-                            properties.setProperty("ProfanityFilter", "false");
-                            properties.setProperty("WelcomeMessage", "false");
-                            properties.setProperty("AutoRoleOn", "false");
-                            properties.setProperty("DelCommands", "false");
+                if (!file.exists()) {
+                    try {
+                        FileOutputStream fileOut = new FileOutputStream(file);
+                        properties.setProperty("ProfanityFilter", "false");
+                        properties.setProperty("WelcomeMessage", "false");
+                        properties.setProperty("AutoRoleOn", "false");
+                        properties.setProperty("DelCommands", "false");
 
-                            properties.store(fileOut, "Server Settings");
-                            fileOut.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        objMsgCh.sendMessage("Config Initialized Success").queue();
-                    } else
-                    {
-                        objMsgCh.sendMessage("Config was already initialized").queue();
+                        properties.store(fileOut, "Server Settings");
+                        fileOut.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    objMsgCh.sendMessage("Config Initialized Success").queue();
                 } else {
-                    objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+                    objMsgCh.sendMessage("Config was already initialized").queue();
                 }
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
-            //GET
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config get"))
-            {
-                if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)){
-                    if (propExists)
-                    {
-                        String properties = "";
-                        for (String s : guildproperties.stringPropertyNames())
-                        {
-                            if (s.equalsIgnoreCase("AutoRole"))
-                            {
-                                Role autorole = guild.getRoleById(guildproperties.getProperty(s));
-                                properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + autorole.getName() + ") \n";
-                            } else if (s.equalsIgnoreCase("WelcomeChannel"))
-                            {
-                                TextChannel welcomechannel = guild.getTextChannelById(guildproperties.getProperty(s));
-                                properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + welcomechannel.getAsMention() + ") \n";
-                            } else {
-                                properties += "**" + s + "** = " + guildproperties.getProperty(s) + " \n";
-                            }
-
-                        }
-                        EmbedBuilder peb = new EmbedBuilder();
-                        peb.setTitle("Current Properties for " + jda.getSelfUser().getName());
-                        peb.setDescription("This is the current properties for " + jda.getSelfUser().getName() + " on " + guild.getName());
-                        peb.addField("", properties, false);
-                        peb.setColor(Color.RED);
-
-                        objMsgCh.sendMessage(peb.build()).queue();
-
-                    }else
-                    {
-                        objMsgCh.sendMessage("Please Initiate the properties file with `config create`").queue();
-                    }
-                } else
-                {
-                    objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
-                }
-            }
-            //AUTOROLE
-            if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config autorole")) {
-                if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
-                    if (propExists) {
-                        String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config autorole ", "");
-                        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                            if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MANAGE_ROLES)) {
-                                guildproperties.setProperty("AutoRoleOn", value);
-                                try {
-                                    FileOutputStream fileOut = new FileOutputStream(propFile);
-                                    guildproperties.store(fileOut, "Updated Settings");
-                                    fileOut.close();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                EmbedBuilder reb = new EmbedBuilder();
-                                String msgValue = value;
-                                if (value.equalsIgnoreCase("true"))
-                                    msgValue = value + ", make sure to set your autorole by using `config setautorole [Role Name]`";
-                                reb.addField("AutoRole set to:", msgValue, false);
-                                objMsgCh.sendMessage(reb.build()).queue();
-                            }else if (value.equalsIgnoreCase("true")) {
-                                objMsgCh.sendMessage("Sorry, I need `MANAGE_ROLES` to be able to do Autorole").queue();
-                            }
-
-
+        }
+        //GET
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config get")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists) {
+                    String properties = "";
+                    for (String s : guildproperties.stringPropertyNames()) {
+                        if (s.equalsIgnoreCase("AutoRole")) {
+                            Role autorole = guild.getRoleById(guildproperties.getProperty(s));
+                            properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + autorole.getName() + ") \n";
+                        } else if (s.equalsIgnoreCase("WelcomeChannel")) {
+                            TextChannel welcomechannel = guild.getTextChannelById(guildproperties.getProperty(s));
+                            properties += "**" + s + "** =" + guildproperties.getProperty(s) + " (" + welcomechannel.getAsMention() + ") \n";
                         } else {
-                            objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
+                            properties += "**" + s + "** = " + guildproperties.getProperty(s) + " \n";
                         }
 
-                    } else {
-                        objMsgCh.sendMessage("Please Initiate the properties file with `config create`").queue();
                     }
+                    EmbedBuilder peb = new EmbedBuilder();
+                    peb.setTitle("Current Properties for " + jda.getSelfUser().getName());
+                    peb.setDescription("This is the current properties for " + jda.getSelfUser().getName() + " on " + guild.getName());
+                    peb.addField("", properties, false);
+                    peb.setColor(Color.RED);
+
+                    objMsgCh.sendMessage(peb.build()).queue();
+
                 } else {
-                    objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+                    objMsgCh.sendMessage("Please Initiate the properties file with `config create`").queue();
                 }
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
-            //SETAUTOROLE
-            if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config setautorole"))
-            {
-                String roleName = objMsg.getContentRaw().toLowerCase().replace(prefix + "config setautorole ", "");
-                if (guild.getRolesByName(roleName, true).size() >= 1)
-                {
-                    List<Role> autoRoleResults= new ArrayList<>();
-                    autoRoleResults = guild.getRolesByName(roleName, true);
-                    Role autoRole = autoRoleResults.get(0);
-                    List<Role> botRoles = new ArrayList<>();
-                    botRoles = guild.getMember(jda.getSelfUser()).getRoles();
-                    Role botHighestRole = botRoles.get(0);
-                    Integer botHRpos = botHighestRole.getPosition();
-                    Integer autoRolePos = autoRole.getPosition();
-                    if (autoRolePos < botHRpos) {
-                        guildproperties.setProperty("AutoRole", autoRole.getId());
-                        try {
-                            FileOutputStream fileOut = new FileOutputStream(propFile);
-                            guildproperties.store(fileOut, "Updated Settings");
-                            fileOut.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+        }
+        //AUTOROLE
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config autorole")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists) {
+                    String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config autorole ", "");
+                    if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                        if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MANAGE_ROLES)) {
+                            guildproperties.setProperty("AutoRoleOn", value);
+                            try {
+                                FileOutputStream fileOut = new FileOutputStream(propFile);
+                                guildproperties.store(fileOut, "Updated Settings");
+                                fileOut.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            EmbedBuilder reb = new EmbedBuilder();
+                            String msgValue = value;
+                            if (value.equalsIgnoreCase("true"))
+                                msgValue = value + ", make sure to set your autorole by using `config setautorole [Role Name]`";
+                            reb.addField("AutoRole set to:", msgValue, false);
+                            objMsgCh.sendMessage(reb.build()).queue();
+                        } else if (value.equalsIgnoreCase("true")) {
+                            objMsgCh.sendMessage("Sorry, I need `MANAGE_ROLES` to be able to do Autorole").queue();
                         }
-                        EmbedBuilder reb = new EmbedBuilder();
-                        reb.setTitle("Set Autorole to:");
-                        reb.setDescription(autoRole.getName());
-                        objMsgCh.sendMessage(reb.build()).queue();
+
+
                     } else {
-                        objMsgCh.sendMessage("Sorry, I can't use a role higher than or equal to `" + botHighestRole.getName() + "`").queue();
+                        objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
                     }
 
-                }else
-                {
-                    objMsgCh.sendMessage("Sorry, I can't find `" + roleName + "`").queue();
+                } else {
+                    objMsgCh.sendMessage("Please Initiate the properties file with `config create`").queue();
                 }
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
-            //WELCOMEMESSAGE
-        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config welcomemessage"))
-        {
+        }
+        //SETAUTOROLE
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config setautorole")) {
+            String roleName = objMsg.getContentRaw().toLowerCase().replace(prefix + "config setautorole ", "");
+            if (guild.getRolesByName(roleName, true).size() >= 1) {
+                List<Role> autoRoleResults = new ArrayList<>();
+                autoRoleResults = guild.getRolesByName(roleName, true);
+                Role autoRole = autoRoleResults.get(0);
+                List<Role> botRoles = new ArrayList<>();
+                botRoles = guild.getMember(jda.getSelfUser()).getRoles();
+                Role botHighestRole = botRoles.get(0);
+                Integer botHRpos = botHighestRole.getPosition();
+                Integer autoRolePos = autoRole.getPosition();
+                if (autoRolePos < botHRpos) {
+                    guildproperties.setProperty("AutoRole", autoRole.getId());
+                    try {
+                        FileOutputStream fileOut = new FileOutputStream(propFile);
+                        guildproperties.store(fileOut, "Updated Settings");
+                        fileOut.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    EmbedBuilder reb = new EmbedBuilder();
+                    reb.setTitle("Set Autorole to:");
+                    reb.setDescription(autoRole.getName());
+                    objMsgCh.sendMessage(reb.build()).queue();
+                } else {
+                    objMsgCh.sendMessage("Sorry, I can't use a role higher than or equal to `" + botHighestRole.getName() + "`").queue();
+                }
+
+            } else {
+                objMsgCh.sendMessage("Sorry, I can't find `" + roleName + "`").queue();
+            }
+        }
+        //WELCOMEMESSAGE
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config welcomemessage")) {
             if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
                 if (propExists) {
                     String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config welcomemessage ", "");
@@ -279,7 +263,8 @@ public class App extends ListenerAdapter {
                         }
                         EmbedBuilder reb = new EmbedBuilder();
                         String msgValue = value;
-                        if (value.equalsIgnoreCase("true")) msgValue = value + ", make sure to set your WelcomeChannel by using `config welcomechannel [#TextChannelName]`";
+                        if (value.equalsIgnoreCase("true"))
+                            msgValue = value + ", make sure to set your WelcomeChannel by using `config welcomechannel [#TextChannelName]`";
                         reb.addField("WelcomeMessage set to:", msgValue, false);
                         objMsgCh.sendMessage(reb.build()).queue();
 
@@ -295,10 +280,9 @@ public class App extends ListenerAdapter {
             }
         }
         //WELCOMECHANNEL
-        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config welcomechannel"))
-        {
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config welcomechannel")) {
             if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
-                if (propExists){
+                if (propExists) {
                     String welcomeChannel = objMsg.getContentRaw().toLowerCase().replace(prefix + "config welcomechannel ", "");
                     welcomeChannel = welcomeChannel.replace("<#", "");
                     welcomeChannel = welcomeChannel.replace(">", "");
@@ -318,11 +302,10 @@ public class App extends ListenerAdapter {
                             objMsgCh.sendMessage(reb.build()).queue();
                         }
                     }
-                } else
-                {
+                } else {
                     objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
-            }else {
+            } else {
                 objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
@@ -346,7 +329,7 @@ public class App extends ListenerAdapter {
                     } else {
                         objMsgCh.sendMessage("Please specify a value betweeen `true` or `false`").queue();
                     }
-                } else{
+                } else {
                     objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
             } else {
@@ -358,42 +341,27 @@ public class App extends ListenerAdapter {
         if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "config prefix")) {
             if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
                 if (propExists) {
-                    String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config prefix ", "") ;
-                    if (!(value.equalsIgnoreCase("") ||value.equalsIgnoreCase(":config prefix"))) {
-                        if (!(value.equalsIgnoreCase(Ref.getPrefix()))) {
-                            guildproperties.setProperty("Prefix", value);
-                            try {
-                                FileOutputStream fileOut = new FileOutputStream(propFile);
-                                guildproperties.store(fileOut, "Updated Settings");
-                                fileOut.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            EmbedBuilder reb = new EmbedBuilder();
-                            reb.addField("Prefix set to", value + "\n make sure you remember the new prefix, you can always see what it is by mentioning the bot together with the `prefix` command", false);
-                            objMsgCh.sendMessage(reb.build()).queue();
-                        } else if (value.equalsIgnoreCase(Ref.getPrefix()))
-                        {
-                            guildproperties.remove("Prefix");
-                            try {
-                                FileOutputStream fileOut = new FileOutputStream(propFile);
-                                guildproperties.store(fileOut, "Updated Settings");
-                                fileOut.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            EmbedBuilder reb = new EmbedBuilder();
-                            reb.addField("Prefix set to ", Ref.getPrefix() + "   (default prefix)", false);
-                            objMsgCh.sendMessage(reb.build()).queue();
+                    String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config prefix ", "");
+                    if (!(value.equalsIgnoreCase("") || value.equalsIgnoreCase(":config prefix"))) {
+                        guildproperties.setProperty("Prefix", value);
+                        try {
+                            FileOutputStream fileOut = new FileOutputStream(propFile);
+                            guildproperties.store(fileOut, "Updated Settings");
+                            fileOut.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                        EmbedBuilder reb = new EmbedBuilder();
+                        reb.addField("Prefix set to", value + "\n make sure you remember the new prefix, you can always see what it is by mentioning the bot together with the `prefix` command", false);
+                        objMsgCh.sendMessage(reb.build()).queue();
                     } else {
-                        objMsgCh.sendMessage("Please Specify a valid prefix").queue();
-                    }
-                } else{
-                    objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
+                    objMsgCh.sendMessage("Please Specify a valid prefix").queue();
                 }
-            } else{
-                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+            } else {
+                objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
+            }
+            } else {
+            objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
 //USERINFO
