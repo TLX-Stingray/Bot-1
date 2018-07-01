@@ -61,6 +61,7 @@ public class App extends ListenerAdapter {
             try {
                 FileInputStream propIn = new FileInputStream(propFile.getPath());
                 guildproperties.load(propIn);
+                propIn.close();
             } catch (Exception e) {
                 System.out.print(e.getStackTrace().toString() + "/n");
             }
@@ -140,6 +141,23 @@ public class App extends ListenerAdapter {
                     objMsgCh.sendMessage("Config Initialized Success").queue();
                 } else {
                     objMsgCh.sendMessage("Config was already initialized").queue();
+                }
+            } else {
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+            }
+        }
+        //DELETE
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config delete")) {
+            if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
+                if (propExists)
+                {
+                    File file = new File(storeMod + guild.getId() + ".properties");
+                    if (file.delete())
+                    {
+                        objMsgCh.sendMessage("Config successfully cleared, All your config data is now deleted").queue();
+                    } else {
+                        objMsgCh.sendMessage("Config couldn't be deleted, try again later and contact developer if it doesn't work again, you can use `message [message]` to contact developer").queue();
+                    }
                 }
             } else {
                 objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
