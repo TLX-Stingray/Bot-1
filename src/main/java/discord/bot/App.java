@@ -102,6 +102,11 @@ public class App extends ListenerAdapter {
         //HELP
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "help") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " help")) {
             objMsgCh.sendMessage(HelpSys.buildGeneralHelp()).queue();
+            EmbedBuilder deb = new EmbedBuilder();
+            deb.setTitle("Donate");
+            deb.setDescription("Just go [here](https://wortelkoek.wixsite.com/wortelkie-discord/donate)");
+
+            objMsgCh.sendMessage(deb.build()).queue();
         }
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "prefix") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " prefix")) {
             EmbedBuilder preb = new EmbedBuilder();
@@ -628,7 +633,15 @@ public class App extends ListenerAdapter {
                 }
             }
 
+            //DONATE
+            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "donate"))
+            {
+                EmbedBuilder deb = new EmbedBuilder();
+                deb.setTitle("Donate");
+                deb.setDescription("Just go [here](https://wortelkoek.wixsite.com/wortelkie-discord/donate)");
 
+                objMsgCh.sendMessage(deb.build()).queue();
+            }
 //Delete Message
             String delCommands = "";
             if (guildproperties.containsKey("DelCommands")) {delCommands = guildproperties.getProperty("DelCommands");}
