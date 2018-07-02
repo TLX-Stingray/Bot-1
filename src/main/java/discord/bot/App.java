@@ -609,6 +609,25 @@ public class App extends ListenerAdapter {
                     objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
                 }
             }
+            //CONFIGLIST
+            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "configlist")) {
+                if (objUser.getId().equals("167336416861224961")) {
+                    String configList = "";
+                    for (Guild gCheck : jda.getGuilds())
+                    {
+                        File checkCFG = new File(storeMod + gCheck.getId() + ".properties");
+                        if (checkCFG.exists())
+                        {
+                            configList += gCheck.getName() + " (" + gCheck.getId() + ") \n";
+                        }
+                    }
+                    EmbedBuilder ceb = new EmbedBuilder();
+                    ceb.setTitle("Configs init for " + jda.getSelfUser().getName());
+                    ceb.setDescription(configList);
+                    objMsgCh.sendMessage(ceb.build()).queue();
+                }
+            }
+
 
 //Delete Message
             String delCommands = "";
