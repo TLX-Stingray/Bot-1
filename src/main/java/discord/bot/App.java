@@ -384,14 +384,14 @@ public class App extends ListenerAdapter {
         }
 //USERINFO
             //Check for Mention
-            if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " userinfo")) {
+            if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " userinfo")) {
                 objUser.openPrivateChannel().queue((channel) ->
                 {
                     channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "userinfo {user as mention} `").queue();
                 });
             }
             //execute command
-            if (objMsg.getContentRaw().contains(prefix + "userinfo")) {
+            if (objMsg.getContentRaw().startsWith(prefix + "userinfo")) {
                 String UserID = objUser.getId();
                 Member newMemb = guild.getMemberById(UserID);
                 User newUser = objUser;
@@ -497,14 +497,14 @@ public class App extends ListenerAdapter {
             }
 //CLEAR
             //Check for Mention
-            if (objMsg.getContentRaw().toLowerCase().contains(jda.getSelfUser().getAsMention() + " clear")) {
+            if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " clear")) {
                 objUser.openPrivateChannel().queue((channel) ->
                 {
                     channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "clear (amount) `").queue();
                 });
             }
             //Execute command
-            if (objMsg.getContentRaw().toLowerCase().contains(prefix + "clear") && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
+            if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "clear") && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
                 String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
                 //Test if amount is Integer
                 if ((Ref.isInteger(samount))) {
@@ -632,7 +632,7 @@ public class App extends ListenerAdapter {
             }
             if (delCommands.equalsIgnoreCase("true"))
             {
-                if (objMsg.getContentRaw().toLowerCase().contains(prefix))
+                if (objMsg.getContentRaw().toLowerCase().startsWith(prefix))
                 {
                     objMsg.delete().queue();
                 }
