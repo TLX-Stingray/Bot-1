@@ -207,7 +207,7 @@ public class App extends ListenerAdapter {
                     String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config autorole ", "");
                     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
                         if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MANAGE_ROLES)) {
-                            guildproperties.setProperty("AutoRoleOn", value);
+                            guildproperties.setProperty(ConfigKeyRef.AutoroleOn, value);
                             try {
                                 FileOutputStream fileOut = new FileOutputStream(propFile);
                                 guildproperties.store(fileOut, "Updated Settings");
@@ -250,7 +250,7 @@ public class App extends ListenerAdapter {
                 Integer botHRpos = botHighestRole.getPosition();
                 Integer autoRolePos = autoRole.getPosition();
                 if (autoRolePos < botHRpos) {
-                    guildproperties.setProperty("AutoRole", autoRole.getId());
+                    guildproperties.setProperty(ConfigKeyRef.autorole, autoRole.getId());
                     try {
                         FileOutputStream fileOut = new FileOutputStream(propFile);
                         guildproperties.store(fileOut, "Updated Settings");
@@ -276,7 +276,7 @@ public class App extends ListenerAdapter {
                 if (propExists) {
                     String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config welcomemessage ", "");
                     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                        guildproperties.setProperty("WelcomeMessage", value);
+                        guildproperties.setProperty(ConfigKeyRef.welcomeM, value);
                         try {
                             FileOutputStream fileOut = new FileOutputStream(propFile);
                             guildproperties.store(fileOut, "Updated Settings");
@@ -311,7 +311,7 @@ public class App extends ListenerAdapter {
                     welcomeChannel = welcomeChannel.replace(">", "");
                     if (guild.getTextChannelById(welcomeChannel) != null) {
                         if (guild.getMember(jda.getSelfUser()).hasPermission(guild.getTextChannelById(welcomeChannel), Permission.MESSAGE_MANAGE)) {
-                            guildproperties.setProperty("WelcomeChannel", welcomeChannel);
+                            guildproperties.setProperty(ConfigKeyRef.welcomeChannel, welcomeChannel);
                             try {
                                 FileOutputStream fileOut = new FileOutputStream(propFile);
                                 guildproperties.store(fileOut, "Updated Settings");
@@ -338,7 +338,7 @@ public class App extends ListenerAdapter {
                 if (propExists) {
                     String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config delcommands ", "");
                     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                        guildproperties.setProperty("DelCommands", value);
+                        guildproperties.setProperty(ConfigKeyRef.Delcommands, value);
                         try {
                             FileOutputStream fileOut = new FileOutputStream(propFile);
                             guildproperties.store(fileOut, "Updated Settings");
@@ -366,7 +366,7 @@ public class App extends ListenerAdapter {
                 if (propExists) {
                     String value = objMsg.getContentRaw().toLowerCase().replace(prefix + "config prefix ", "");
                     if (!(value.equalsIgnoreCase("") || value.equalsIgnoreCase(":config prefix"))) {
-                        guildproperties.setProperty("Prefix", value);
+                        guildproperties.setProperty(ConfigKeyRef.cfgPrefix, value);
                         try {
                             FileOutputStream fileOut = new FileOutputStream(propFile);
                             guildproperties.store(fileOut, "Updated Settings");
@@ -695,26 +695,27 @@ public class App extends ListenerAdapter {
 
         if (propExists)
         {
-            String welcomeMessageOnStr = guildproperties.getProperty("WelcomeMessage");
+            String welcomeMessageOnStr = guildproperties.getProperty(ConfigKeyRef.welcomeM);
             if (welcomeMessageOnStr.equalsIgnoreCase("true"))
             {
                 String newGuyAsMention = evt.getMember().getUser().getAsMention();
                 String guildName = guild.getName();
                 String Message = "Welcome to " + guildName + ", " + newGuyAsMention + ", we hope you enjoy your time here :smiley: ";
-                if (guildproperties.containsKey("WelcomeChannel"))
+                if (guildproperties.containsKey(ConfigKeyRef.welcomeChannel));
                 {
-                    String welcomeChannelS = guildproperties.getProperty("WelcomeChannel");
+                    String welcomeChannelS = guildproperties.getProperty(ConfigKeyRef.welcomeChannel);
                     TextChannel welcomeChannel = guild.getTextChannelById(welcomeChannelS);
                     welcomeChannel.sendMessage(Message).queue();
                 }
             }
 
-            String autoRoleOn = guildproperties.getProperty("AutoRoleOn");
-            if (guildproperties.containsKey("AutoRole"))
-            {
-                String roleId = guildproperties.getProperty("AutoRole");
-                Role AutoRole = guild.getRoleById(roleId);
-                guild.getController().addRolesToMember(evt.getMember(), AutoRole).queue();
+            String autoRoleOn = guildproperties.getProperty(ConfigKeyRef.AutoroleOn);
+            if (autoRoleOn.equalsIgnoreCase("true")) {
+                if (guildproperties.containsKey(ConfigKeyRef.autorole)) {
+                    String roleId = guildproperties.getProperty(ConfigKeyRef.autorole);
+                    Role AutoRole = guild.getRoleById(roleId);
+                    guild.getController().addRolesToMember(evt.getMember(), AutoRole).queue();
+                }
             }
         }
     }
