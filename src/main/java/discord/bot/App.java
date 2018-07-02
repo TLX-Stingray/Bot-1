@@ -154,11 +154,9 @@ public class App extends ListenerAdapter {
         //DELETE
         if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "config delete")) {
             if (guild.getMember(objUser).hasPermission(Permission.ADMINISTRATOR)) {
-                if (propExists)
-                {
+                if (propExists) {
                     File file = new File(storeMod + guild.getId() + ".properties");
-                    if (file.delete())
-                    {
+                    if (file.delete()) {
                         objMsgCh.sendMessage("Config successfully cleared, All your config data is now deleted").queue();
                     } else {
                         objMsgCh.sendMessage("Config couldn't be deleted, try again later and contact developer if it doesn't work again, you can use `message [message]` to contact developer").queue();
@@ -378,270 +376,249 @@ public class App extends ListenerAdapter {
                         reb.addField("Prefix set to", value + "\n make sure you remember the new prefix, you can always see what it is by mentioning the bot together with the `prefix` command", false);
                         objMsgCh.sendMessage(reb.build()).queue();
                     } else {
-                    objMsgCh.sendMessage("Please Specify a valid prefix").queue();
+                        objMsgCh.sendMessage("Please Specify a valid prefix").queue();
+                    }
+                } else {
+                    objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
                 }
             } else {
-                objMsgCh.sendMessage("Please Initiate the properties file with `Config create`").queue();
-            }
-            } else {
-            objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
+                objMsgCh.sendMessage("You need `ADMINISTRATOR` to use this command").queue();
             }
         }
 //USERINFO
-            //Check for Mention
-            if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " userinfo")) {
-                objUser.openPrivateChannel().queue((channel) ->
-                {
-                    channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "userinfo {user as mention} `").queue();
-                });
-            }
-            //execute command
-            if (objMsg.getContentRaw().startsWith(prefix + "userinfo")) {
-                String UserID = objUser.getId();
-                Member newMemb = guild.getMemberById(UserID);
-                User newUser = objUser;
-                String msgNoCmd = lowerMsg.replace(prefix + "userinfo", "");
-                //Interpret Command for Different user specified
-                if (!msgNoCmd.equalsIgnoreCase("")) {
-                    if (!msgNoCmd.contains("<@")) {
-                        objUser.openPrivateChannel().queue((channel) ->
-                        {
-                            channel.sendMessage("You used my 'userinfo' command wrongly, make sure to mention the user you wish to check the info of in the message " +
-                                    "for example: " + prefix + "userinfo @User . Hope you understand :grinning:").queue();
-                        });
-
-                        return;
-                    }
-                    String ID = msgNoCmd.replace(" <@", "");
-                    ID = ID.replace(">", "");
-                    newMemb = guild.getMemberById(ID);
-                    newUser = newMemb.getUser();
-                }
-                //Init Embed
-                EmbedBuilder eb = new EmbedBuilder();
-                eb.setTitle("User Info of " + newUser.getName());
-                eb.setColor(Ref.userCL);
-                eb.setImage(newUser.getAvatarUrl());
-                //Reinit Embed if user is a bot
-                if (newUser.isBot()) {
-                    eb.setTitle("Bot Info of " + newUser.getName());
-                    eb.setColor(Ref.botCL);
-                    eb.addField("THIS USER IS A BOT", "", false);
-                }
-                //Add Fields
-                eb.addField("Display Name: ", newMemb.getEffectiveName(), false);
-                eb.addField("ID:", newUser.getId(), false);
-                eb.addField("Joined on", newMemb.getJoinDate().toLocalDate().toString(), false);
-                eb.addField("Online State:", newMemb.getOnlineStatus().toString(), false);
-                //Build and Send Embed
-                objMsgCh.sendMessage(eb.build()).queue();
-            }
-    //BOTINFO
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "botinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " botinfo")) {
-                //Init Embed
-                EmbedBuilder seb = new EmbedBuilder();
-                seb.setTitle("Server info of: " + jda.getSelfUser().getName() + " running on " + jda.getGuilds().size() + " servers");
-                seb.setColor(Color.RED);
-                //Get Bot Roles
-                List<Role> botRoles = new ArrayList<>();
-                botRoles = guild.getMember(jda.getSelfUser()).getRoles();
-                String botRolesString = "";
-                for (Role r : botRoles)
-                {
-                    botRolesString += r.getName() + "\n";
-                }
-                //Retrieved server list
-                //add Fields
-                seb.addField("Server Count:", Integer.toString(jda.getGuilds().size()), false);
-                seb.addField("Uptime:", GetUptime.getUptime(), false);
-                seb.addField("Roles:", botRolesString, false);
-                //Build and Send Embed
-                objMsgCh.sendMessage(seb.build()).queue();
-            }
-    //CHANNELINFO
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo")) {   //Init Embed
-                EmbedBuilder ceb = new EmbedBuilder();
-                ceb.setTitle("Channel info of " + objMsgCh.getName());
-                ceb.setColor(Color.RED);
-                //Add Fields
-                ceb.addField("Channel ID: ", objMsgCh.getId(), false);
-                ceb.addField("History size: ", Integer.toString(objMsgCh.getIterableHistory().complete().size() - 1), false);
-                ceb.addField("Created on: ", objMsgCh.getCreationTime().toLocalDate().toString(), false);
-                //Build and Send Embed
-                objMsgCh.sendMessage(ceb.build()).queue();
-            }
-//SERVERINFO
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo")) {
-                //Init Embed
-                EmbedBuilder seb = new EmbedBuilder();
-                seb.setTitle("Info About the server named: " + guild.getName());
-                seb.setColor(Color.RED);
-                seb.setImage(guild.getIconUrl());
-                //Add Fields
-                seb.addField("Server ID:", guild.getId(), false);
-                seb.addField("Member Amount:", Integer.toString(guild.getMembers().size()), false);
-                seb.addField("Created On:", guild.getCreationTime().toLocalDate().toString(), false);
-                seb.addField("Owner:", guild.getOwner().getUser().getName() + "#" + guild.getOwner().getUser().getDiscriminator() +
-                        " (" + guild.getOwner().getUser().getId() + ")", false);
-                seb.addField("Text Channel Amount:", Integer.toString(guild.getTextChannels().size()), false);
-                //Get Text Channels
-                String txtChannelList = "";
-                for (TextChannel txt : guild.getTextChannels()) {
-                    txtChannelList += txt.getName() + " (" + txt.getId() + ") \n";
-                }
-                seb.addField("Text Channels:", txtChannelList, false);
-                seb.addField("Voice Channel Amount:", Integer.toString(guild.getVoiceChannels().size()), false);
-                //Get Voice Channels
-                String vcChannelList = "";
-                for (VoiceChannel vc : guild.getVoiceChannels()) {
-                    vcChannelList += vc.getName() + " (" + vc.getId() + ") \n";
-                }
-                seb.addField("Voice Channels:", vcChannelList, false);
-                //Build and Send Embed
-                objMsgCh.sendMessage(seb.build()).queue();
-            }
-//CLEAR
-            //Check for Mention
-            if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " clear")) {
-                objUser.openPrivateChannel().queue((channel) ->
-                {
-                    channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "clear (amount) `").queue();
-                });
-            }
-            //Execute command
-            if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "clear") && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
-                String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
-                //Test if amount is Integer
-                if ((Ref.isInteger(samount))) {
-                    int i = Integer.parseInt(samount) + 1;
-                    if (i <= 100) {
-                        List<Message> retrieved = objtxtMsgCh.getHistory().retrievePast(i).complete();
-                        objtxtMsgCh.deleteMessages(retrieved).queue();
-                    }
-                } else {
+        //Check for Mention
+        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " userinfo")) {
+            objUser.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "userinfo {user as mention} `").queue();
+            });
+        }
+        //execute command
+        if (objMsg.getContentRaw().startsWith(prefix + "userinfo")) {
+            String UserID = objUser.getId();
+            Member newMemb = guild.getMemberById(UserID);
+            User newUser = objUser;
+            String msgNoCmd = lowerMsg.replace(prefix + "userinfo", "");
+            //Interpret Command for Different user specified
+            if (!msgNoCmd.equalsIgnoreCase("")) {
+                if (!msgNoCmd.contains("<@")) {
                     objUser.openPrivateChannel().queue((channel) ->
-                    {   //Notify User via PM
-                        channel.sendMessage("You must make sure you use the clear command correctly '" + prefix
-                                + "clear {amount)', if the format is correct you should make sure you used a valid integer").queue();
+                    {
+                        channel.sendMessage("You used my 'userinfo' command wrongly, make sure to mention the user you wish to check the info of in the message " +
+                                "for example: " + prefix + "userinfo @User . Hope you understand :grinning:").queue();
                     });
+
+                    return;
                 }
-
+                String ID = msgNoCmd.replace(" <@", "");
+                ID = ID.replace(">", "");
+                newMemb = guild.getMemberById(ID);
+                newUser = newMemb.getUser();
             }
-//MESSAGE COMMAND
-            //Check for Mention
-            if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message")) {
+            //Init Embed
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("User Info of " + newUser.getName());
+            eb.setColor(Ref.userCL);
+            eb.setImage(newUser.getAvatarUrl());
+            //Reinit Embed if user is a bot
+            if (newUser.isBot()) {
+                eb.setTitle("Bot Info of " + newUser.getName());
+                eb.setColor(Ref.botCL);
+                eb.addField("THIS USER IS A BOT", "", false);
+            }
+            //Add Fields
+            eb.addField("Display Name: ", newMemb.getEffectiveName(), false);
+            eb.addField("ID:", newUser.getId(), false);
+            eb.addField("Joined on", newMemb.getJoinDate().toLocalDate().toString(), false);
+            eb.addField("Online State:", newMemb.getOnlineStatus().toString(), false);
+            //Build and Send Embed
+            objMsgCh.sendMessage(eb.build()).queue();
+        }
+        //BOTINFO
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "botinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " botinfo")) {
+            //Init Embed
+            EmbedBuilder seb = new EmbedBuilder();
+            seb.setTitle("Server info of: " + jda.getSelfUser().getName() + " running on " + jda.getGuilds().size() + " servers");
+            seb.setColor(Color.RED);
+            //Get Bot Roles
+            List<Role> botRoles = new ArrayList<>();
+            botRoles = guild.getMember(jda.getSelfUser()).getRoles();
+            String botRolesString = "";
+            for (Role r : botRoles) {
+                botRolesString += r.getName() + "\n";
+            }
+            //Retrieved server list
+            //add Fields
+            seb.addField("Server Count:", Integer.toString(jda.getGuilds().size()), false);
+            seb.addField("Uptime:", GetUptime.getUptime(), false);
+            seb.addField("Roles:", botRolesString, false);
+            //Build and Send Embed
+            objMsgCh.sendMessage(seb.build()).queue();
+        }
+        //CHANNELINFO
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "channelinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " channelinfo")) {   //Init Embed
+            EmbedBuilder ceb = new EmbedBuilder();
+            ceb.setTitle("Channel info of " + objMsgCh.getName());
+            ceb.setColor(Color.RED);
+            //Add Fields
+            ceb.addField("Channel ID: ", objMsgCh.getId(), false);
+            ceb.addField("History size: ", Integer.toString(objMsgCh.getIterableHistory().complete().size() - 1), false);
+            ceb.addField("Created on: ", objMsgCh.getCreationTime().toLocalDate().toString(), false);
+            //Build and Send Embed
+            objMsgCh.sendMessage(ceb.build()).queue();
+        }
+//SERVERINFO
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverinfo") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " serverinfo")) {
+            //Init Embed
+            EmbedBuilder seb = new EmbedBuilder();
+            seb.setTitle("Info About the server named: " + guild.getName());
+            seb.setColor(Color.RED);
+            seb.setImage(guild.getIconUrl());
+            //Add Fields
+            seb.addField("Server ID:", guild.getId(), false);
+            seb.addField("Member Amount:", Integer.toString(guild.getMembers().size()), false);
+            seb.addField("Created On:", guild.getCreationTime().toLocalDate().toString(), false);
+            seb.addField("Owner:", guild.getOwner().getUser().getName() + "#" + guild.getOwner().getUser().getDiscriminator() +
+                    " (" + guild.getOwner().getUser().getId() + ")", false);
+            seb.addField("Text Channel Amount:", Integer.toString(guild.getTextChannels().size()), false);
+            //Get Text Channels
+            String txtChannelList = "";
+            for (TextChannel txt : guild.getTextChannels()) {
+                txtChannelList += txt.getName() + " (" + txt.getId() + ") \n";
+            }
+            seb.addField("Text Channels:", txtChannelList, false);
+            seb.addField("Voice Channel Amount:", Integer.toString(guild.getVoiceChannels().size()), false);
+            //Get Voice Channels
+            String vcChannelList = "";
+            for (VoiceChannel vc : guild.getVoiceChannels()) {
+                vcChannelList += vc.getName() + " (" + vc.getId() + ") \n";
+            }
+            seb.addField("Voice Channels:", vcChannelList, false);
+            //Build and Send Embed
+            objMsgCh.sendMessage(seb.build()).queue();
+        }
+//CLEAR
+        //Check for Mention
+        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " clear")) {
+            objUser.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "clear (amount) `").queue();
+            });
+        }
+        //Execute command
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "clear") && guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
+            String samount = objMsg.getContentRaw().replace(prefix + "clear ", "");
+            //Test if amount is Integer
+            if ((Ref.isInteger(samount))) {
+                int i = Integer.parseInt(samount) + 1;
+                if (i <= 100) {
+                    List<Message> retrieved = objtxtMsgCh.getHistory().retrievePast(i).complete();
+                    objtxtMsgCh.deleteMessages(retrieved).queue();
+                }
+            } else {
                 objUser.openPrivateChannel().queue((channel) ->
-                {
-                    channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "message (Message) `").queue();
+                {   //Notify User via PM
+                    channel.sendMessage("You must make sure you use the clear command correctly '" + prefix
+                            + "clear {amount)', if the format is correct you should make sure you used a valid integer").queue();
                 });
             }
 
-            if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "message")) {
-                User owner = jda.getUserById("167336416861224961");
-                String msgNoCommand = objMsg.getContentRaw().replace(prefix + "message", "");
-                EmbedBuilder peb = new EmbedBuilder();
-                peb.setTitle("Message From: " + objUser.getName() + " (" + objUser.getId() + ") ");
-                peb.addField("", msgNoCommand, false);
+        }
+//MESSAGE COMMAND
+        //Check for Mention
+        if (objMsg.getContentRaw().toLowerCase().startsWith(jda.getSelfUser().getAsMention() + " message")) {
+            objUser.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage("Please use the command with the prefix, this command does not support mentioning example: `" + prefix + "message (Message) `").queue();
+            });
+        }
 
-                owner.openPrivateChannel().queue((channel) ->
-                {
-                    channel.sendMessage(peb.build()).queue();
-                });
-            }
+        if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "message")) {
+            User owner = jda.getUserById("167336416861224961");
+            String msgNoCommand = objMsg.getContentRaw().replace(prefix + "message", "");
+            EmbedBuilder peb = new EmbedBuilder();
+            peb.setTitle("Message From: " + objUser.getName() + " (" + objUser.getId() + ") ");
+            peb.addField("", msgNoCommand, false);
+
+            owner.openPrivateChannel().queue((channel) ->
+            {
+                channel.sendMessage(peb.build()).queue();
+            });
+        }
+//DONATE
+        if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "donate") || objMsg.getContentRaw().equalsIgnoreCase(jda.getSelfUser().getAsMention() + " donate")) {
+            EmbedBuilder deb = new EmbedBuilder();
+            deb.setTitle("Donate");
+            deb.setDescription("Just go [here](https://wortelkoek.wixsite.com/wortelkie-discord/donate)");
+
+            objMsgCh.sendMessage(deb.build()).queue();
+        }
 
 //DEV ONLY COMMANDS
+        if (objUser.getId().equals("167336416861224961")) {
+
             //UPDATE SOON
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatesoon")) {
-                if (objUser.getId().equals("167336416861224961")) {
-                    jda.getPresence().setGame(Game.playing("UPDATE ROLLING OUT"));
-                } else {
-                    System.out.print("Dev Command from Non-Dev \n");
-                    objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(").queue();
-                }
+                jda.getPresence().setGame(Game.playing("UPDATE ROLLING OUT"));
             }
             //UPDATE CANCEL
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "updatecan")) {
-                if (objUser.getId().equals("167336416861224961")) {
-                    jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " | help"));
-                } else {
-                    System.out.print("Dev Command from Non-Dev \n");
-                    objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
-                }
+                jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " servers | help"));
             }
             //SERVERLIST
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "serverlist")) {
-                if (objUser.getId().equals("167336416861224961")) {
-                    String finalList = "";
-                    for (Guild gld : jda.getGuilds()) {
-                        finalList += gld.getName() + " (" + gld.getId() + ") \n";
-                    }
-                    EmbedBuilder eServers = new EmbedBuilder();
-                    eServers.setTitle("Serverinfo of " + jda.getSelfUser().getName());
-                    eServers.setColor(Color.RED);
-                    eServers.addField("Server List:", finalList, false);
-
-                    objMsgCh.sendMessage(eServers.build()).queue();
-                } else {
-                    System.out.print("Dev Command from Non-Dev \n");
-                    objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
+                String finalList = "";
+                for (Guild gld : jda.getGuilds()) {
+                    finalList += gld.getName() + " (" + gld.getId() + ") \n";
                 }
+                EmbedBuilder eServers = new EmbedBuilder();
+                eServers.setTitle("Serverinfo of " + jda.getSelfUser().getName());
+                eServers.setColor(Color.RED);
+                eServers.addField("Server List:", finalList, false);
+
+                objMsgCh.sendMessage(eServers.build()).queue();
             }
             //GETINVITE
             if (objMsg.getContentRaw().toLowerCase().startsWith(prefix + "getinvite")) {
-                if (objUser.getId().equals("167336416861224961")) {
-                    String supGuildId = objMsg.getContentRaw().replace(prefix + "getinvite ", "");
-                    if (!supGuildId.isEmpty()) {
-                        if (jda.getGuildById(supGuildId).isAvailable()) {
-                            Guild getInvFrom = jda.getGuildById(supGuildId);
-                            if (jda.getGuilds().contains(getInvFrom)) {
-                                List<Invite> invList = new ArrayList<>();
-                                List<TextChannel> txtChList = getInvFrom.getTextChannels();
-                                for (TextChannel tc : txtChList) {
-                                    if (getInvFrom.getMember(jda.getSelfUser()).hasPermission(tc, Permission.CREATE_INSTANT_INVITE)) {
-                                        invList.add(tc.createInvite().complete());
-                                    }
+
+                String supGuildId = objMsg.getContentRaw().replace(prefix + "getinvite ", "");
+                if (!supGuildId.isEmpty()) {
+                    if (jda.getGuildById(supGuildId).isAvailable()) {
+                        Guild getInvFrom = jda.getGuildById(supGuildId);
+                        if (jda.getGuilds().contains(getInvFrom)) {
+                            List<Invite> invList = new ArrayList<>();
+                            List<TextChannel> txtChList = getInvFrom.getTextChannels();
+                            for (TextChannel tc : txtChList) {
+                                if (getInvFrom.getMember(jda.getSelfUser()).hasPermission(tc, Permission.CREATE_INSTANT_INVITE)) {
+                                    invList.add(tc.createInvite().complete());
                                 }
-                                if (invList.size() >= 1) {
-                                    objMsgCh.sendMessage("Here you go --> " + invList.get(0).getURL()).queue();
-                                } else {
-                                    objMsgCh.sendMessage("Sorry, I can't find anything :pensive: ").queue();
-                                }
+                            }
+                            if (invList.size() >= 1) {
+                                objMsgCh.sendMessage("Here you go --> " + invList.get(0).getURL()).queue();
+                            } else {
+                                objMsgCh.sendMessage("Sorry, I can't find anything :pensive: ").queue();
                             }
                         }
                     }
-                } else {
-                    System.out.print("Dev Command from Non-Dev \n");
-                    objMsgCh.sendMessage("You have to be a Developer to use that command, sorry :(");
                 }
             }
             //CONFIGLIST
             if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "configlist")) {
-                if (objUser.getId().equals("167336416861224961")) {
-                    String configList = "";
-                    for (Guild gCheck : jda.getGuilds())
-                    {
-                        File checkCFG = new File(storeMod + gCheck.getId() + ".properties");
-                        if (checkCFG.exists())
-                        {
-                            configList += gCheck.getName() + " (" + gCheck.getId() + ") \n";
-                        }
+                String configList = "";
+                for (Guild gCheck : jda.getGuilds()) {
+                    File checkCFG = new File(storeMod + gCheck.getId() + ".properties");
+                    if (checkCFG.exists()) {
+                        configList += gCheck.getName() + " (" + gCheck.getId() + ") \n";
                     }
-                    EmbedBuilder ceb = new EmbedBuilder();
-                    ceb.setTitle("Configs init for " + jda.getSelfUser().getName());
-                    ceb.setDescription(configList);
-                    objMsgCh.sendMessage(ceb.build()).queue();
                 }
+                EmbedBuilder ceb = new EmbedBuilder();
+                ceb.setTitle("Configs init for " + jda.getSelfUser().getName());
+                ceb.setDescription(configList);
+                objMsgCh.sendMessage(ceb.build()).queue();
             }
+        }
 
-            //DONATE
-            if (objMsg.getContentRaw().equalsIgnoreCase(prefix + "donate"))
-            {
-                EmbedBuilder deb = new EmbedBuilder();
-                deb.setTitle("Donate");
-                deb.setDescription("Just go [here](https://wortelkoek.wixsite.com/wortelkie-discord/donate)");
 
-                objMsgCh.sendMessage(deb.build()).queue();
-            }
 //Delete Message
             String delCommands = "";
             if (guildproperties.containsKey("DelCommands")) {delCommands = guildproperties.getProperty("DelCommands");}
