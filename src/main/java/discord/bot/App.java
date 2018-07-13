@@ -74,13 +74,14 @@ public class App extends ListenerAdapter {
             }
         } else {
             propExists = false;
+            prefix = Ref.getPrefix();
         }
 
         //Message Validation
         if (evt.getAuthor().isBot()) return;
         if (objMsgCh instanceof PrivateChannel) return;
 
-        if (objMsg.getContentRaw().contains(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
+        if (objMsg.getContentRaw().startsWith(prefix) || objMsg.getContentRaw().contains(jda.getSelfUser().getAsMention())) {
             if (guild != null) {
                 System.out.print("Received: " + objMsg.getContentRaw() + " on Server: " + guild.getName() + " (" + guild.getId() + ") \n");
             } else {
