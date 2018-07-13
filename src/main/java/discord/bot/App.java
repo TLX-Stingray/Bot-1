@@ -680,13 +680,14 @@ public class App extends ListenerAdapter {
                     }
                 }
             }
-
-            String autoRoleOn = guildproperties.getProperty(ConfigKeyRef.AutoroleOn);
-            if (autoRoleOn.equalsIgnoreCase("true")) {
-                if (guildproperties.containsKey(ConfigKeyRef.autorole)) {
-                    String roleId = guildproperties.getProperty(ConfigKeyRef.autorole);
-                    Role AutoRole = guild.getRoleById(roleId);
-                    guild.getController().addRolesToMember(evt.getMember(), AutoRole).queue();
+            if (guildproperties.containsKey(ConfigKeyRef.AutoroleOn)) {
+                String autoRoleOn = guildproperties.getProperty(ConfigKeyRef.AutoroleOn);
+                if (autoRoleOn.equalsIgnoreCase("true")) {
+                    if (guildproperties.containsKey(ConfigKeyRef.autorole)) {
+                        String roleId = guildproperties.getProperty(ConfigKeyRef.autorole);
+                        Role AutoRole = guild.getRoleById(roleId);
+                        guild.getController().addRolesToMember(evt.getMember(), AutoRole).queue();
+                    }
                 }
             }
         }
