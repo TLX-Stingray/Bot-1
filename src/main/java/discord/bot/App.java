@@ -24,6 +24,7 @@ public class App extends ListenerAdapter {
         jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " Servers | help"));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
+
         ArrayList<String> myDict = new ArrayList<String>();
         InputStream resourcestream = App.class.getClassLoader().getResourceAsStream(fileName);
         BufferedReader r = new BufferedReader(new InputStreamReader(resourcestream));
@@ -38,6 +39,8 @@ public class App extends ListenerAdapter {
         }
         //Read File Content
         badwords = new HashSet<>(myDict);
+
+        Set<String> donateTier1 = DonateSys.loadTier1();
     }
 
 
@@ -63,7 +66,7 @@ public class App extends ListenerAdapter {
                 guildproperties.load(propIn);
                 propIn.close();
             } catch (Exception e) {
-                System.out.print(e.getStackTrace().toString() + "/n");
+                e.printStackTrace();
             }
             if (guildproperties.containsKey("Prefix")) {
                 prefix = guildproperties.getProperty("Prefix");
@@ -445,7 +448,7 @@ public class App extends ListenerAdapter {
             botRoles = guild.getMember(jda.getSelfUser()).getRoles();
             String botRolesString = "";
             for (Role r : botRoles) {
-                botRolesString += r.getName() + "\n";
+                botRolesString += r.getAsMention() + "  ";
             }
             //Retrieved server list
             //add Fields
@@ -481,19 +484,7 @@ public class App extends ListenerAdapter {
             seb.addField("Owner:", guild.getOwner().getUser().getName() + "#" + guild.getOwner().getUser().getDiscriminator() +
                     " (" + guild.getOwner().getUser().getId() + ")", false);
             seb.addField("Text Channel Amount:", Integer.toString(guild.getTextChannels().size()), false);
-            //Get Text Channels
-            String txtChannelList = "";
-            for (TextChannel txt : guild.getTextChannels()) {
-                txtChannelList += txt.getName() + " (" + txt.getId() + ") \n";
-            }
-            seb.addField("Text Channels:", txtChannelList, false);
             seb.addField("Voice Channel Amount:", Integer.toString(guild.getVoiceChannels().size()), false);
-            //Get Voice Channels
-            String vcChannelList = "";
-            for (VoiceChannel vc : guild.getVoiceChannels()) {
-                vcChannelList += vc.getName() + " (" + vc.getId() + ") \n";
-            }
-            seb.addField("Voice Channels:", vcChannelList, false);
             //Build and Send Embed
             objMsgCh.sendMessage(seb.build()).queue();
         }
