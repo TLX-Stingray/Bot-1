@@ -51,9 +51,10 @@ public class App extends ListenerAdapter {
         MessageChannel objMsgCh = evt.getChannel();
         TextChannel objtxtMsgCh = evt.getTextChannel();
         Message objMsg = evt.getMessage();
+        Guild guild = evt.getGuild();
+
         String lowerMsg = objMsg.getContentRaw().toLowerCase();
         String userFull = objUser.getName() + "#" + objUser.getDiscriminator();
-        Guild guild = evt.getGuild();
         String str = objMsg.getContentRaw();
         String[] splitStr = str.trim().split("\\s+");
         Properties guildproperties = new Properties();
@@ -632,9 +633,10 @@ public class App extends ListenerAdapter {
             }
             if (delCommands.equalsIgnoreCase("true"))
             {
-                if (objMsg.getContentRaw().toLowerCase().startsWith(prefix))
-                {
-                    objMsg.delete().queue();
+                if (guild.getMember(jda.getSelfUser()).hasPermission(Permission.MESSAGE_MANAGE)) {
+                    if (objMsg.getContentRaw().toLowerCase().startsWith(prefix)) {
+                        objMsg.delete().queue();
+                    }
                 }
             }
 
@@ -663,17 +665,18 @@ public class App extends ListenerAdapter {
 
         if (propExists)
         {
-            String welcomeMessageOnStr = guildproperties.getProperty(ConfigKeyRef.welcomeM);
-            if (welcomeMessageOnStr.equalsIgnoreCase("true"))
-            {
-                String newGuyAsMention = evt.getMember().getUser().getAsMention();
-                String guildName = guild.getName();
-                String Message = "Welcome to " + guildName + ", " + newGuyAsMention + ", we hope you enjoy your time here :smiley: ";
-                if (guildproperties.containsKey(ConfigKeyRef.welcomeChannel));
-                {
-                    String welcomeChannelS = guildproperties.getProperty(ConfigKeyRef.welcomeChannel);
-                    TextChannel welcomeChannel = guild.getTextChannelById(welcomeChannelS);
-                    welcomeChannel.sendMessage(Message).queue();
+            if (guildproperties.containsKey(ConfigKeyRef.welcomeM)) {
+                String welcomeMessageOnStr = guildproperties.getProperty(ConfigKeyRef.welcomeM);
+                if (welcomeMessageOnStr.equalsIgnoreCase("true")) {
+                    String newGuyAsMention = evt.getMember().getUser().getAsMention();
+                    String guildName = guild.getName();
+                    String Message = "Welcome to " + guildName + ", " + newGuyAsMention + ", we hope you enjoy your time here :smiley: ";
+                    if (guildproperties.containsKey(ConfigKeyRef.welcomeChannel)) ;
+                    {
+                        String welcomeChannelS = guildproperties.getProperty(ConfigKeyRef.welcomeChannel);
+                        TextChannel welcomeChannel = guild.getTextChannelById(welcomeChannelS);
+                        welcomeChannel.sendMessage(Message).queue();
+                    }
                 }
             }
 
