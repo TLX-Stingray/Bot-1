@@ -29,29 +29,22 @@ public class App extends ListenerAdapter {
         jda.getPresence().setGame(Game.playing("on " + Integer.toString(jda.getGuilds().size()) + " Servers | help"));
         System.out.print("Bot running w/ token: ' " + token + " ' With prefix set to:  '" + prefix + "'\n");
         String fileName = "txt_Files/bad_word_list_UTF8.txt";
-
         ArrayList<String> myDict = new ArrayList<String>();
         InputStream resourcestream = App.class.getClassLoader().getResourceAsStream(fileName);
         BufferedReader r = new BufferedReader(new InputStreamReader(resourcestream));
-
-        if (resourcestream == null) {
-            throw new FileNotFoundException(fileName);
-        }
 
         String line;
         while ((line = r.readLine()) != null) {
             myDict.add(line);
         }
+
+        ControlListener controlListenerThread = new ControlListener();
+        controlListenerThread.start();
+
         //Read File Content
         badwords = new HashSet<>(myDict);
-
         Set<String> donateTier1 = DonateSys.loadTier1();
-        try {
-            mainControlConnection = new ServerSocket(8443);
-            System.out.println("[" + dtf.format(LocalDateTime.now()) + "] Successfully started ControlConnection on: " + mainControlConnection.getLocalSocketAddress().toString() + " | 8443");
-        } catch (IOException ei) {
-            System.out.println("[" + dtf.format(LocalDateTime.now()) + "] Failed to start Control Connection");
-        }
+        System.out.println("[" + dtf.format(LocalDateTime.now()) + "] Bot Seems Active");
     }
 
 
