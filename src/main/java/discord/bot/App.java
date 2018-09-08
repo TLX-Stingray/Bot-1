@@ -8,8 +8,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.io.*;
-import java.net.ServerSocket;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -20,7 +18,7 @@ public class App extends ListenerAdapter {
     public static String token = Ref.getToken();
     public static Set<String> badwords;
     public static String storeMod = System.getenv("STORAGE_MODIFIER");
-    public static ServerSocket mainControlConnection;
+    //public static ServerSocket mainControlConnection;
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public static void main(String[] args) throws Exception {
@@ -46,12 +44,12 @@ public class App extends ListenerAdapter {
         badwords = new HashSet<>(myDict);
 
         Set<String> donateTier1 = DonateSys.loadTier1();
-        try {
+        /*try {
             mainControlConnection = new ServerSocket(8443);
             System.out.println("[" + dtf.format(LocalDateTime.now()) + "] Successfully started ControlConnection on: " + mainControlConnection.getLocalSocketAddress().toString() + " | 8443");
         } catch (IOException ei) {
             System.out.println("[" + dtf.format(LocalDateTime.now()) + "] Failed to start Control Connection");
-        }
+        }*/
     }
 
 
